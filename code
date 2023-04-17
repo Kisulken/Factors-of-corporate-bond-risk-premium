@@ -1,0 +1,761 @@
+####Загружаем пакет ####
+#install.packages("readxl")
+library(readxl)
+data <- read_excel("quarters.xlsx")
+data2 <- data
+
+#install.packages("car")
+#install.packages("ggplot2")
+#install.packages("dplyr")
+# install.packages("xts")
+# install.packages("glmnet")
+# install.packages("strucchange")
+#install.packages("stringr")
+library(stringr)
+library(strucchange)
+library(glmnet)
+library(car)
+library(ggplot2)
+library(lmtest)
+library(sandwich)
+library(dplyr)
+library(MASS)
+library(xts)
+library(corrplot)
+#### Замена рейтингов эмитента АКРА ####
+
+#Пробуем заменить рейтинг
+data2[9][data[9] == 'AAA(RU)'] <- '22'
+data2[9][data[9] == 'AA+(RU)'] <- '21'
+data2[9][data[9] == 'AA(RU)'] <- '20'
+data2[9][data[9] == 'AA-(RU)'] <- '19'
+data2[9][data[9] == 'A+(RU)'] <- '18'
+data2[9][data[9] == 'A(RU)'] <- '17'
+data2[9][data[9] == 'A-(RU)'] <- '16'
+data2[9][data[9] == 'BBB+(RU)'] <- '15'
+data2[9][data[9] == 'BBB(RU)'] <- '14'
+data2[9][data[9] == 'BBB-(RU)'] <- '13'
+data2[9][data[9] == 'BB+(RU)'] <- '12'
+data2[9][data[9] == 'BB(RU)'] <- '10'
+data2[9][data[9] == 'BB-(RU)'] <- '10'
+data2[9][data[9] == 'B+(RU)'] <- '9'
+data2[9][data[9] == 'B(RU)'] <- '8'
+data2[9][data[9] == 'B-(RU)'] <- '7'
+data2[9][data[9] == 'CCC(RU)'] <- '6'
+data2[9][data[9] == 'CC(RU)'] <- '5'
+data2[9][data[9] == 'C(RU)'] <- '4'
+data2[9][data[9] == 'RD(RU)'] <- '3'
+data2[9][data[9] == 'SD(RU)'] <- '2'
+data2[9][data[9] == 'D(RU)'] <- '1'
+data2[9][data[9] == 'Withdrawn'] <- '-'
+data[9]
+
+
+#### Замена рейтингов эмиссии АКРА ####
+
+#Пробуем заменить рейтинг
+data2[11][data[11] == 'AAA(RU)'] <- '22'
+data2[11][data[11] == 'AA+(RU)'] <- '21'
+data2[11][data[11] == 'AA(RU)'] <- '20'
+data2[11][data[11] == 'AA-(RU)'] <- '19'
+data2[11][data[11] == 'A+(RU)'] <- '18'
+data2[11][data[11] == 'A(RU)'] <- '17'
+data2[11][data[11] == 'A-(RU)'] <- '16'
+data2[11][data[11] == 'BBB+(RU)'] <- '15'
+data2[11][data[11] == 'BBB(RU)'] <- '14'
+data2[11][data[11] == 'BBB-(RU)'] <- '13'
+data2[11][data[11] == 'BB+(RU)'] <- '12'
+data2[11][data[11] == 'BB(RU)'] <- '11'
+data2[11][data[11] == 'BB-(RU)'] <- '10'
+data2[11][data[11] == 'B+(RU)'] <- '9'
+data2[11][data[11] == 'B(RU)'] <- '8'
+data2[11][data[11] == 'B-(RU)'] <- '7'
+data2[11][data[11] == 'CCC(RU)'] <- '6'
+data2[11][data[11] == 'CC(RU)'] <- '5'
+data2[11][data[11] == 'C(RU)'] <- '4'
+data2[11][data[11] == 'RD(RU)'] <- '3'
+data2[11][data[11] == 'SD(RU)'] <- '2'
+data2[11][data[11] == 'D(RU)'] <- '1'
+data2[11][data[11] == 'Withdrawn'] <- '-'
+
+
+#### Замена рейтингов эмитентов РА ####
+
+#Пробуем заменить рейтинг
+data2[10][data[10] == 'ruAAA'] <- '22'
+data2[10][data[10] == 'ruAA+'] <- '21'
+data2[10][data[10] == 'ruAA'] <- '20'
+data2[10][data[10] == 'ruAA-'] <- '19'
+data2[10][data[10] == 'ruA+'] <- '18'
+data2[10][data[10] == 'ruA'] <- '17'
+data2[10][data[10] == 'ruA-'] <- '16'
+data2[10][data[10] == 'ruBBB+'] <- '15'
+data2[10][data[10] == 'ruBBB'] <- '14'
+data2[10][data[10] == 'ruBBB-'] <- '13'
+data2[10][data[10] == 'ruBB+'] <- '12'
+data2[10][data[10] == 'ruBB'] <- '10'
+data2[10][data[10] == 'ruBB-'] <- '10'
+data2[10][data[10] == 'ruB+'] <- '9'
+data2[10][data[10] == 'ruB'] <- '8'
+data2[10][data[10] == 'ruB-'] <- '7'
+data2[10][data[10] == 'ruCCC'] <- '6'
+data2[10][data[10] == 'ruCC'] <- '5'
+data2[10][data[10] == 'ruC'] <- '4'
+data2[10][data[10] == 'ruRD'] <- '3'
+data2[10][data[10] == 'ruD'] <- '2'
+data2[10][data[10] == 'Withdrawn'] <- '-'
+
+
+#### Замена рейтингов эмиссии РА ####
+
+#Пробуем заменить рейтинг
+data2[12][data[12] == 'ruAAA'] <- '22'
+data2[12][data[12] == 'ruAA+'] <- '21'
+data2[12][data[12] == 'ruAA'] <- '20'
+data2[12][data[12] == 'ruAA-'] <- '19'
+data2[12][data[12] == 'ruA+'] <- '18'
+data2[12][data[12] == 'ruA'] <- '17'
+data2[12][data[12] == 'ruA-'] <- '16'
+data2[12][data[12] == 'ruBBB+'] <- '15'
+data2[12][data[12] == 'ruBBB'] <- '14'
+data2[12][data[12] == 'ruBBB-'] <- '13'
+data2[12][data[12] == 'ruBB+'] <- '12'
+data2[12][data[12] == 'ruBB'] <- '11'
+data2[12][data[12] == 'ruBB-'] <- '10'
+data2[12][data[12] == 'ruB+'] <- '9'
+data2[12][data[12] == 'ruB'] <- '8'
+data2[12][data[12] == 'ruB-'] <- '7'
+data2[12][data[12] == 'ruCCC'] <- '6'
+data2[12][data[12] == 'ruCC'] <- '5'
+data2[12][data[12] == 'ruC'] <- '4'
+data2[12][data[12] == 'ruRD'] <- '3'
+data2[12][data[12] == 'ruD'] <- '2'
+data2[12][data[12] == 'Withdrawn'] <- '-'
+
+####Выделяем рейтинг ####
+
+data3 <- data2
+data3 <- filter(data3, `Рейтинг эмитента АКРА` != "-" | `Рейтинг эмитента Эксперт РА` != "-" | 
+                  `Рейтинг эмиссии АКРА` != "-" | `Рейтинг эмиссии Эксперт РА` != "-")
+
+#Меняем структуру данных
+datarate <- data.frame(data3$`Рейтинг эмитента АКРА`, data3$`Рейтинг эмитента Эксперт РА`,
+                       data3$`Рейтинг эмиссии АКРА`, data3$`Рейтинг эмиссии Эксперт РА`)
+chars <- sapply(datarate, is.character)
+datarate[, chars] <- as.data.frame(apply(
+  datarate[, chars], 2, as.numeric
+))
+
+#Ставим услоиве
+datarate2 <- datarate
+
+#Выгружаем в excel
+#install.packages("writexl")
+#library(writexl)
+#write_xlsx(datarate2, "C:\\Users\\Alexey\\Desktop\\data.xlsx")
+
+#Выбираем рейтинги
+rate <- read_excel("rate1.xlsx")
+rate2 <- if_else(rate$data3..Рейтинг.эмиссии.АКРА. >0, rate$data3..Рейтинг.эмиссии.АКРА., 
+                 if_else(rate$data3..Рейтинг.эмиссии.Эксперт.РА. >0, rate$data3..Рейтинг.эмиссии.Эксперт.РА., 
+                         if_else(rate$data3..Рейтинг.эмитента.АКРА. >0, rate$data3..Рейтинг.эмитента.АКРА., 
+                                 if_else(rate$data3..Рейтинг.эмитента.Эксперт.РА. >0, rate$data3..Рейтинг.эмитента.Эксперт.РА.,0 ))))
+data4 <- data.frame(data3, rate2)
+
+#### Данные с ВВП ####
+
+dataq <- read_excel("quarters.xlsx", sheet = 2)
+dataq <- dataq[, 1:6]
+
+m1 <- merge(data4, dataq, by.x = "q", by.y = "q")
+
+
+#Добавляем листинг
+
+x1 <- str_detect(m1$Листинг,"Первый уровень" )
+x2 <- str_detect(m1$Листинг,"Второй уровень" )
+x3 <- str_detect(m1$Листинг,"Третий уровень" )
+
+#Называем переменную
+listing <- case_when(x1 ==TRUE ~ 1, x2 ==TRUE ~2, x3 == TRUE ~ 3)
+
+m2 <- data.frame(m1 , listing)
+
+#### Убираем ненужные столбики ####
+dmod <- subset(m2, select = -c(q, Специальный.вид , Цена.первичного.размещения...,
+                               Листинг,Рейтинг.эмитента.АКРА  , Рейтинг.эмитента.Эксперт.РА ,
+                               Рейтинг.эмиссии.АКРА, Рейтинг.эмиссии.Эксперт.РА, Погашение ,
+                               Оферта..put., Оферта..call., ISIN, year, month, quarter, Дата,
+                               Россия.реальный.объем.ВВП..кварт..данные.))
+
+#Убираем доходность
+dmod2 <- subset(dmod, select = -c(Доходность.первичного.размещения...))
+
+#Удаляем наблюдение без данных
+dmod2 <- dmod2[-c(40),]
+
+#Меняем структуру z-spread
+dmod2$z.spread <- as.numeric(dmod2$z.spread)
+
+#Создаем переменную отношения госдолга к ввп
+debt_to_gdp <- dmod2$q_debt/dmod2$nom_gdp
+
+#Добавляем ее
+dmod2 <- data.frame(dmod2, debt_to_gdp)
+
+#Убираем исользованные переменные
+dmod2 <- subset(dmod2, select = -c(debt, nom_gdp, q_debt))
+
+
+#### Выделяем структурный сдвиг ####
+
+#Смотрим распределение z-sperad во времени
+ggplot(dmod4, aes(Окончание.размещения , z.spread)) +geom_point() +geom_smooth()
+
+#Смотрим на однородность выборки
+boxplot(dmod4$z.spread)
+
+#Пробуем убрать выбросы
+dmod10 <- dplyr::filter(dmod4, z.spread< quantile(dmod4$z.spread, 0.975) &
+                          z.spread> quantile(dmod4$z.spread, 0.025))
+
+boxplot(dmod10$z_spread)
+#Переименуем столбцы
+names(dmod10) <- c("name", "industry", "coupons", "volume", "time" ,"maturity" ,"if_put", "if_call", 
+                  "exchange", 
+                  "dollar", "z_spread", "oil", "cpi", "pmi" ,"rate", "gdp_growth", "listing",
+                  "debt_to_gdp")
+
+
+#Строим новый график
+ggplot(dmod10, aes(time , z_spread)) +geom_point() +geom_smooth()
+
+#Мы можем посмотреть на разное повдение высокорейтинговых облигаций и остальных
+dmod11 <- subset(dmod10, rate >=22)
+dmod12 <- subset(dmod10, rate <22)
+
+#графички
+ggplot(dmod10, aes(time , z_spread)) +geom_point() +geom_smooth()
+ggplot(dmod11, aes(time , z_spread)) +geom_point() +geom_smooth()
+ggplot(dmod12, aes(time , z_spread)) +geom_point() +geom_smooth()
+
+#Проверим тестом чоу неоднородность во времени
+sctest(dmod11$z_spread ~dmod11$time , type = "Chow")
+#Имеется явный структурный сдвиг
+
+#Проверка другой модели
+sctest(dmod12$z_spread ~dmod12$time , type = "Chow")
+#Для них структурный сдвиг отсутствует 
+
+#### Выделяем временные промежутки ####
+
+#Строим временные ряды
+ts10 <- xts(x = dplyr::select(dmod10, -time), order.by = dmod10$time)
+ts11 <- xts(x = dplyr::select(dmod11, -time), order.by = dmod11$time)
+ts12 <- xts(x = dplyr::select(dmod12, -time), order.by = dmod12$time)
+
+
+#Выделяем высокорейтинговые облигаций до 2018
+
+dathb <- window(ts11, start= "2015-01-01", end = "2018-01-01")
+dathb <- as.data.frame(dathb)
+dathb2 <- dplyr::select(dathb, -c(name, industry))
+
+#Меняем структуру
+chars <- sapply(dathb2, is.character)
+dathb2[, chars] <- as.data.frame(apply(
+  dathb2[, chars], 2, as.numeric))
+
+#Возвращаем industry
+dathb2 <- data.frame(dathb2, dathb$industry)
+
+
+#Выделяем высокорейтинговые облигаций после 2018 
+
+datha <- window(ts11, start= "2018-01-01", end = "2022-01-01")
+datha <- as.data.frame(datha)
+datha2 <- dplyr::select(datha, -c(name, industry))
+
+#Меняем структуру
+chars <- sapply(datha2, is.character)
+datha2[, chars] <- as.data.frame(apply(
+  datha2[, chars], 2, as.numeric))
+
+#Возвращаем industry
+datha2 <- data.frame(datha2, datha$industry)
+
+
+#Выделяем остальные облигации
+datl <- dplyr::select(dmod12, -c(time, name))
+str(datl)
+
+#### Анализ 3 датасетов. низкорейтинговые ####
+
+## Анализируем низкорейтинговые облигации
+
+#Для начла строим корреляционную матрицу, чтобы избежать мультиколлинеарности
+corrplot(cor(dplyr::select(datl, -c(industry, z_spread))))
+#Очень высокие корреляции cpi и debt_to_gdp, debt_to_gdp и dollar, 
+#oil и gdp_growth, dollar и cpi
+
+
+#Строим первую регрессию
+mod_l <- lm(z_spread ~ . -coupons, data = dplyr::select(datl, -industry))
+summary(mod_l)
+vif(mod_l)
+#Очень больщой коэффициент vif у cpi
+
+mod_l2 <- update(mod_l, . ~ . -cpi)
+summary(mod_l2)
+vif(mod_l2)
+#Теперь коэффициенты меньше 4, подбираем спецификацию
+V_new <- vcovHC(mod, type = "HC0")
+coeftest(mod, V_new)
+crPlots(mod_l2)
+#Нужен логарифм объема
+
+#Меняем
+mod_l3 <- update(mod_l2, . ~ . +log(volume) -volume )
+summary(mod_l3)
+vif(mod_l3)
+crPlots(mod_l3)
+
+#А если убрать 30-летнюю облигацию?
+datl2 <- subset(datl, datl$maturity<20)
+mod_l4 <- lm(z_spread ~ .-coupons  -cpi -industry, data = datl2)
+summary(mod_l4)
+vif(mod_l4)
+crPlots(mod_l4)
+
+#Если добавить логарифм?
+mod_l5 <- update(mod_l4, . ~. +log(maturity) -maturity)
+summary(mod_l5)
+vif(mod_l5)
+crPlots(mod_l5)
+
+#Если добавить квадрат?
+mod_l5 <- update(mod_l4, . ~.  +I(maturity^2))
+summary(mod_l5)
+vif(mod_l5)
+crPlots(mod_l5)
+V_new <- vcovHC(mod_l5, type = "HC0")
+coeftest(mod_l5, V_new)
+#Вроде лучше, но не сильно, можно попробовать обе спецификации
+
+#А если квадрат долга?
+mod_l6 <- update(mod_l5, . ~.  +I(debt_to_gdp^2))
+summary(mod_l6)
+vif(mod_l6)
+crPlots(mod_l6)
+V_new <- vcovHC(mod_l6, type = "HC0")
+coeftest(mod_l6, V_new)
+#Но это стравнно интерпретировать
+
+mod_l7 <- update(mod_l6, . ~.  +log(pmi) -pmi)
+summary(mod_l7)
+vif(mod_l7)
+crPlots(mod_l7)
+V_new <- vcovHC(mod_l7, type = "HC0")
+coeftest(mod_l7, V_new)
+#pmi не спасти
+
+#А теперь индустрии
+mod_l8 <- lm(z_spread ~ .-coupons  +log(volume) -cpi -volume  +I(maturity^2) +
+               I(debt_to_gdp^2), data = datl2)
+summary(mod_l8)
+vif(mod_l8)
+crPlots(mod_l8)
+V_new <- vcovHC(mod_l8, type = "HC0")
+coeftest(mod_l8, V_new)
+
+
+#Делаем факторные переменные индустрий
+if_building <- if_else(str_detect(datl2$industry,"Строительство зданий" ), 1,0)
+if_construction_mat <- if_else(str_detect(datl2$industry,"Производство строительных материалов" ), 1, 0)
+if_wholesale <- if_else(str_detect(datl2$industry,"Оптовая торговля" ), 1, 0)
+if_property <- if_else(str_detect(datl2$industry,"Недвижимость и фонды недвижимости" ), 1, 0)
+if_autoproduction <- if_else(str_detect(datl2$industry,"Производство автотранспорта" ), 1, 0)
+
+datl3 <- data.frame(datl2, if_building, if_construction_mat, if_wholesale, if_property, if_autoproduction)
+#Теперь со значимыми индустриями
+mod_l9 <- lm(z_spread ~ .-coupons  +log(volume) +I(maturity^2) -cpi -volume +
+               I(debt_to_gdp^2) -industry + if_building + if_construction_mat 
+             +if_wholesale + if_property + if_autoproduction , data = datl3)
+summary(mod_l9)
+vif(mod_l9)
+crPlots(mod_l9)
+V_new <- vcovHC(mod_l9, type = "HC0")
+coeftest(mod_l9, V_new)
+
+#Убираем все АИКом
+mod_l10 <- stepAIC(mod_l9)
+summary(mod_l10)
+vif(mod_l10)
+crPlots(mod_l10)
+V_new <- vcovHC(mod_l10, type = "HC0")
+coeftest(mod_l10, V_new)
+
+mod_l11 <- update(mod_l10, . ~ . -if_building -if_construction_mat -if_wholesale 
+                  -if_property -if_autoproduction)
+summary(mod_l11)
+V_new <- vcovHC(mod_l11, type = "HC0")
+coeftest(mod_l11, V_new)
+
+#Выдача данных
+library(sjPlot)
+tab_model(mod_l11, vcov.type = "HC0", show.ci = FALSE, show.se = TRUE, p.style = "numeric")
+
+
+#### Анализ 3 датасетов. Высокорейтинговые до 2018 ####
+
+#Для начла строим корреляционную матрицу, чтобы избежать мультиколлинеарности
+corrplot(cor(dplyr::select(dathb2, -c(dathb.industry, rate))), method = "number")
+#Очень высокие корреляции cpi и gdp_growth, oil и dollar, 
+#pmi и gdp_growth, pmi и cpi
+
+
+#Строим первую регрессию
+mod_hb <- lm(z_spread ~ . -coupons -cpi, data = dplyr::select(dathb2, -c(dathb.industry, rate)))
+summary(mod_hb)
+vif(mod_hb)
+#Очень больщой коэффициент vif у dollar
+
+#Строим без dollar
+mod_hb2 <- lm(z_spread ~ . -coupons -cpi -dollar, data = dplyr::select(dathb2, -c(dathb.industry, rate)))
+summary(mod_hb2)
+vif(mod_hb2)
+#Очень больщой коэффициент vif у gdp_growth
+
+#Подберем спецификацию
+mod_hb3 <-update(mod_hb2, . ~. +log(volume) -volume) 
+crPlots(mod_hb3)
+summary(mod_hb3)
+vif(mod_hb3)
+V_new <- vcovHC(mod_hb3, type = "HC0")
+coeftest(mod_hb3, V_new)
+
+#Что с корреляцией?
+x <- dplyr::select(dathb2, -c(coupons, cpi, dollar , dathb.industry, rate))
+corrplot(cor(x))
+#Все же нужно убрать gdp_growth, так как он коррелирован с pmi и долгом
+
+#Убираем gdp_growth
+mod_hb4 <-update(mod_hb3, . ~. -gdp_growth) 
+crPlots(mod_hb4)
+summary(mod_hb4)
+vif(mod_hb4)
+V_new <- vcovHC(mod_hb4, type = "HC0")
+coeftest(mod_hb4, V_new)
+
+#Квадрат долга?
+mod_hb5 <-update(mod_hb4, . ~. +I(debt_to_gdp^2)) 
+crPlots(mod_hb5)
+summary(mod_hb5)
+vif(mod_hb5)
+V_new <- vcovHC(mod_hb5, type = "HC0")
+coeftest(mod_hb5, V_new)
+#Вроде лучше
+
+#Логарифм срока?
+mod_hb6 <-update(mod_hb5, . ~. +log(maturity) -maturity) 
+crPlots(mod_hb6)
+summary(mod_hb6)
+vif(mod_hb6)
+V_new <- vcovHC(mod_hb6, type = "HC0")
+coeftest(mod_hb6, V_new)
+#Вроде лучше
+
+#Если сначала убрать АИКом
+mod_hb7 <- stepAIC(mod_hb6)
+summary(mod_hb7)
+crPlots(mod_hb8)
+V_new <- vcovHC(mod_hb7, type = "HC0")
+coeftest(mod_hb7, V_new)
+
+
+#Добавляем индустрии
+mod_hb7 <- lm(z_spread ~ . -coupons -cpi -dollar , data = dplyr::select(dathb2, -c(rate)))
+summary(mod_hb7)
+crPlots(mod_hb7)
+V_new <- vcovHC(mod_hb7, type = "HC0")
+coeftest(mod_hb7, V_new)
+
+mod_hb8 <- lm(z_spread ~ exchange + pmi +listing +debt_to_gdp + I(debt_to_gdp^2) 
+              +if_fmet + if_mining , data= dplyr::select(dathb2, -c(rate)))
+summary(mod_hb8)
+V_new <- vcovHC(mod_hb8, type = "HC0")
+coeftest(mod_hb8, V_new)
+#И все же тут квадрат долга не значим
+
+mod_hb9 <- lm(z_spread ~ exchange + pmi 
+             +maturity +I(maturity^2) , data= dplyr::select(dathb2, -c(rate)))
+summary(mod_hb9)
+V_new <- vcovHC(mod_hb9, type = "HC0")
+coeftest(mod_hb9, V_new)
+vif(mod_hb9)
+
+
+#Добавляем факторные перменные
+if_fmet <- if_else(str_detect(dathb2$dathb.industry,"Черная металлургия" ), 1,0)
+if_mining <- if_else(str_detect(dathb2$dathb.industry,"Добыча драгоценных металлов" ), 1, 0)
+if_tube <- if_else(str_detect(dathb2$dathb.industry,"Трубопроводный транспорт" ), 1, 0)
+if_gas <- if_else(str_detect(dathb2$dathb.industry,"Нефтегазовая отрасль" ), 1, 0)
+dathb3 <- data.frame(dathb2, if_fmet, if_mining, if_tube, if_gas)
+
+#Строим с индустриями
+mod_hb8 <- lm(z_spread ~ . -coupons -cpi -dollar 
+               +log(volume) -
+                volume -if_fmet -if_mining -if_gas -if_tube -gdp_growth +log(maturity) -maturity +I(debt_to_gdp^2), data = dplyr::select(dathb2, -c(rate)))
+summary(mod_hb8)
+crPlots(mod_hb8)
+V_new <- vcovHC(mod_hb8, type = "HC0")
+coeftest(mod_hb8, V_new)
+
+
+#Убираем остальное АИКом
+mod_hb9 <- stepAIC(mod_hb8)
+summary(mod_hb9)
+crPlots(mod_hb9)
+V_new <- vcovHC(mod_hb9, type = "HC0")
+coeftest(mod_hb9, V_new)
+#Но есть все еще незначимый листинг и пут
+
+#Попробуем убрать
+mod_hb10 <- update(mod_hb9, . ~ . -listing)
+summary(mod_hb10)
+crPlots(mod_hb10)
+V_new <- vcovHC(mod_hb10, type = "HC0")
+coeftest(mod_hb10, V_new)
+#Оставим пут
+
+#### Анализ 3 датасетов. Высокорейтинговые после 2018 ####
+
+#Для начла строим корреляционную матрицу, чтобы избежать мультиколлинеарности
+corrplot(cor(dplyr::select(datha2, -c(datha.industry, rate, z_spread))), method = "number")
+#Очень высокие корреляции cpi и gdp_growth, oil и dollar, 
+#pmi и gdp_growth, pmi и cpi
+
+
+#Строим первую регрессию
+mod_ha <- lm(z_spread ~ . -coupons -cpi data = dplyr::select(datha2, -c(datha.industry, rate)))
+summary(mod_ha)
+vif(mod_ha)
+#Очень больщой коэффициент vif у oil и gdp_growth 
+
+#Попробуем сначала подобрать спецификацию
+mod_ha2 <- update(mod_ha, . ~. + log(volume) -volume)
+vif(mod_ha2)
+summary(mod_ha2)
+crPlots(mod_ha2)
+V_new <- vcovHC(mod_ha2, type = "HC0")
+coeftest(mod_ha2, V_new)
+
+#Можно квадрат долга
+mod_ha3 <- update(mod_ha2, . ~. + I(debt_to_gdp^2))
+vif(mod_ha3)
+summary(mod_ha3)
+crPlots(mod_ha3)
+V_new <- vcovHC(mod_ha3, type = "HC0")
+coeftest(mod_ha3, V_new)
+#Очень больщой коэффициент vif у cpi
+
+#Строим без cpi
+mod_ha4 <- update(mod_ha3, . ~. -cpi)
+vif(mod_ha4)
+summary(mod_ha4)
+crPlots(mod_ha4)
+V_new <- vcovHC(mod_ha4, type = "HC0")
+coeftest(mod_ha4, V_new)
+
+#Строим без oil
+mod_ha5 <- update(mod_ha4, . ~. -oil)
+vif(mod_ha5)
+summary(mod_ha5)
+crPlots(mod_ha5)
+V_new <- vcovHC(mod_ha5, type = "HC0")
+coeftest(mod_ha5, V_new)
+
+#Пробуем квадрат maturity
+mod_ha6 <- update(mod_ha5, . ~. +I(maturity^2))
+vif(mod_ha6)
+summary(mod_ha6)
+crPlots(mod_ha6)
+V_new <- vcovHC(mod_ha6, type = "HC0")
+coeftest(mod_ha6, V_new)
+#Квадрат значим!
+
+#И логарифм незначим
+mod_ha6 <- update(mod_ha5, . ~. +log(maturity) -maturity)
+vif(mod_ha6)
+summary(mod_ha6)
+crPlots(mod_ha6)
+V_new <- vcovHC(mod_ha6, type = "HC0")
+coeftest(mod_ha6, V_new)
+#Но квадрат лучше
+
+#Ну удаляем через АИК
+mod_ha7 <- stepAIC(mod_ha6)
+vif(mod_ha7)
+summary(mod_ha7)
+crPlots(mod_ha7)
+V_new <- vcovHC(mod_ha7, type = "HC0")
+coeftest(mod_ha7, V_new)
+
+mod_ha11 <- update(mod_ha7, . ~ . +dollar)
+summary(mod_ha11)
+V_new <- vcovHC(mod_ha11, type = "HC0")
+coeftest(mod_ha11, V_new)
+
+#Добавляем индустрии
+mod_ha8 <- lm(z_spread ~ maturity +I(maturity^2) +debt_to_gdp +I(debt_to_gdp^2) 
+              +pmi +dollar +datha.industry, data = datha2)
+summary(mod_ha8)
+
+#Добавляем переменную индустрии
+if_mining <- if_else(str_detect(datha2$datha.industry,"Добыча прочих полезных ископаемых" ), 1, 0)
+if_inst <- if_else(str_detect(datha2$datha.industry,"Институты развития и государственные агентства" ), 1, 0)
+if_elec <- if_else(str_detect(datha2$datha.industry,"Электроэнергетика" ), 1, 0)
+
+datha3 <- data.frame(datha2, if_mining, if_inst, if_elec)
+
+mod_ha9 <- lm(z_spread ~ +maturity + I(maturity^2) +debt_to_gdp +I(debt_to_gdp^2) 
+              +pmi +dollar +if_mining  +if_elec, data = datha3)
+summary(mod_ha9)
+V_new <- vcovHC(mod_ha9, type = "HC0")
+coeftest(mod_ha9, V_new)
+
+
+#### А если все же построить по всем? ####
+
+#Для начла строим корреляционную матрицу, чтобы избежать мультиколлинеарности
+corrplot(cor(dplyr::select(dmod10, -c(industry, z_spread, name, time))), method = "number")
+#Очень высокие корреляции cpi и gdp_growth, oil и gdp_growth, 
+#dollar и debt_to_gdp, dollar и cpi, cpi и debt_to_gdp
+#Наверно стоит убрать cpi
+
+
+#Строим первую регрессию
+mod_all <- lm(z_spread ~ . -coupons, data = dplyr::select(dmod10, -c(industry, name, time)))
+summary(mod_all)
+vif(mod_all)
+#Очень больщой коэффициент vif у cpi
+#Уберем
+
+mod_all2 <- update(mod_all, . ~. -cpi)
+summary(mod_all2)
+vif(mod_all2)
+crPlots(mod_all2)
+V_new <- vcovHC(mod_all2, type = "HC0")
+coeftest(mod_all2, V_new)
+#Теперь проблем с мультиколлинеарностью нет
+#Подберем спецификацию - нужен логарифм объема
+
+# нужен логарифм объема
+mod_all3 <- update(mod_all2, . ~. +log(volume) -volume)
+summary(mod_all3)
+crPlots(mod_all3)
+V_new <- vcovHC(mod_all3, type = "HC0")
+coeftest(mod_all3, V_new)
+
+#Логарифм или квадарат срока?
+mod_all4 <- update(mod_all3, . ~. +log(maturity) -maturity)
+summary(mod_all4)
+crPlots(mod_all4)
+V_new <- vcovHC(mod_all4, type = "HC0")
+coeftest(mod_all4, V_new)
+#Логарифму плохо
+
+# А квадарат?
+mod_all4 <- update(mod_all3, . ~. + I(maturity^2))
+summary(mod_all4)
+crPlots(mod_all4)
+V_new <- vcovHC(mod_all4, type = "HC0")
+coeftest(mod_all4, V_new)
+#Ну стало лушче, хотя все еще не значимо
+
+#Квадарат долга?
+mod_all5 <- update(mod_all4, . ~. + I(debt_to_gdp^2))
+summary(mod_all5)
+crPlots(mod_all5)
+V_new <- vcovHC(mod_all5, type = "HC0")
+coeftest(mod_all5, V_new)
+#Стало намного лучше
+
+#Квадарат роста ВВП?
+mod_all6 <- update(mod_all5, . ~. + I(gdp_growth^2))
+summary(mod_all6)
+crPlots(mod_all6)
+V_new <- vcovHC(mod_all6, type = "HC0")
+coeftest(mod_all6, V_new)
+#Стало намного лучше
+# Ну тут все
+
+#Удаляем через АИК
+mod_all7 <- stepAIC(mod_all6)
+summary(mod_all7)
+crPlots(mod_all7)
+V_new <- vcovHC(mod_all7, type = "HC0")
+coeftest(mod_all7, V_new)
+
+
+mod_all11 <- update(mod_all7, . ~ . +listing -exchange)
+summary(mod_all11)
+V_new <- vcovHC(mod_all11, type = "HC0")
+coeftest(mod_all11, V_new)
+
+#Добавим индустрии
+mod_all8 <- lm(z_spread ~ exchange + oil +rate +log(volume) +listing + industry, data = dmod10 )
+summary(mod_all8)
+V_new <- vcovHC(mod_all8, type = "HC0")
+coeftest(mod_all8, V_new)
+#Ит сервисы, нефтегаз, строительные материалы, строительство зданий, сх
+
+#Добавляем переменные
+if_it <- if_else(str_detect(dmod10$industry,"ИТ сервисы и программное обеспечение" ), 1, 0)
+if_gasoil <- if_else(str_detect(dmod10$industry,"Нефтегазовая отрасль" ), 1, 0)
+if_constr <- if_else(str_detect(dmod10$industry,"Строительство зданий" ), 1, 0)
+if_constr_mat <- if_else(str_detect(dmod10$industry,"Производство строительных материалов" ), 1, 0)
+if_agro <- if_else(str_detect(dmod10$industry,"АПК и сельское хозяйство" ), 1, 0)
+
+#Добавим
+mod_all9 <- lm(z_spread ~ exchange + oil +rate +log(volume) + if_it +if_gasoil + if_constr +if_constr_mat + 
+                 if_agro + maturity +I(maturity^2),
+                 data = dmod10)
+summary(mod_all9)
+V_new <- vcovHC(mod_all9, type = "HC0")
+coeftest(mod_all9, V_new)
+# maturity?
+
+#### Строим графики бескупонной дозодности за 2 периода ####
+KBD <- read_excel("KBD2.xlsx")
+names(KBD) <- c("date", "14 октября 2016", "16 марта 2020")
+
+KBD2 <- KBD
+KBD2$date <- as.character(KBD2$date)
+
+
+ggplot(KBD, aes(date ,`14 октября 2016`)) +geom_line(data =KBD, aes(date, `14 октября 2016`), linewidth =1) +
+  xlab("Срок до погашения") +ylab("КБД на 14 октября 2016")
+ggplot(KBD, aes(date ,`16 марта 2020`), log = "x") +geom_line(data =KBD, aes(date, `16 марта 2020`,), linewidth =1) +
+  xlab("Срок до погашения") +ylab("КБД на 16 марта 2020 года")
+
+
+#### Делаем красивую выдачу ####
+# install.packages("modelsummary")
+# install.packages("tidyverse")
+# install.packages("gt")
+library(modelsummary)
+library(tidyverse)
+library(gt)
+
+msummary(list( "На всех данных" = mod_all11, 
+               "На низкокачественных облигациях" = mod_l11,
+              "На высококачественных облигациях до 2018 года" = mod_hb9, 
+              "На высококачественных облигациях после 2018 года" = mod_ha11 
+              ),
+         stars = c('*' = .1, '**' = .05, '***' = .01),
+         title = md("**Модели факторов премии за риск корпоративных облигаций**"), output = "gt",
+         gof_omit = 'IC|Log|RMSE|Std.Errors|F', 
+         vcov = c("HC0"),
+         align = "ccccc") %>% cols_width(
+           everything() ~ px(180))
