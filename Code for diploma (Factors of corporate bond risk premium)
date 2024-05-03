@@ -1,0 +1,5036 @@
+#### Библиотеки и начало ####
+library(readxl)
+data <- read_excel("Индексы для R.xlsx")
+
+library("writexl")
+library("strucchange")
+library("readxl")
+library("tsDyn")
+library("aTSA")
+library("dplyr")
+library("knitr")
+library("texreg")
+library("tidyverse")
+library("plm")
+library("PortfolioAnalytics")
+library("ROI")
+library("ROI.plugin.glpk")
+library("DEoptim")
+library("ROI.plugin.quadprog")
+library("quantmod")
+library("ggplot2")
+library("PerformanceAnalytics")
+library("xts")
+library("dynlm")
+library("ARDL")
+library("urca")
+library("timeSeries")
+library("MSwM")
+library("stats")
+library("lmtest")
+library("sandwich")
+library("car")
+library("stargazer")
+library("readr")
+library("ggpubr")
+library("modelsummary")
+library("oglmx")
+library("glmnet")
+library("effects")
+library("nnet")
+library("erer")
+library("corrplot")
+library("devtools")
+library("haven")
+library("gt")
+library("caret")
+library("lares")
+library("AER")
+library("pROC")
+library("pscl")
+library("cvms")
+
+# install.packages("writexl")
+# install.packages("strucchange")
+# install.packages("readxl")
+# install.packages("tsDyn")
+# install.packages("aTSA")
+# install.packages("dplyr")
+# install.packages("knitr")
+# install.packages("texreg")
+# install.packages("tidyverse")
+# install.packages("plm")
+# install.packages("PortfolioAnalytics")
+# install.packages("ROI")
+# install.packages("ROI.plugin.glpk")
+# install.packages("DEoptim")
+# install.packages("ROI.plugin.quadprog")
+# install.packages("quantmod")
+# install.packages("ggplot2")
+# install.packages("PerformanceAnalytics")
+# install.packages("xts")
+# install.packages("dynlm")
+# install.packages("ARDL")
+# install.packages("urca")
+# install.packages("timeSeries")
+# install.packages("MSwM")
+# install.packages("stats")
+# install.packages("lmtest")
+# install.packages("sandwich")
+# install.packages("car")
+# install.packages("stargazer")
+# install.packages("readr")
+# install.packages("ggpubr")
+# install.packages("modelsummary")
+# install.packages("oglmx")
+# install.packages("glmnet")
+# install.packages("effects")
+# install.packages("nnet")
+# install.packages("erer")
+# install.packages("corrplot")
+# install.packages("devtools")
+# install.packages("haven")
+# install.packages("gt")
+# install.packages("caret")
+# install.packages("lares")
+# install.packages("AER")
+# install.packages("pROC")
+# install.packages("pscl")
+# install.packages("cvms")
+
+
+#### Для дат ####
+data_short <- data[1:4]
+
+dates <- NULL
+for (i in 1: 109){
+ 
+  x <- t(data_short[i,])
+   dates <- rbind(dates, x)
+}
+dates
+
+dates2 <- as.Date(dates)
+dates2 <- as.Date(dates, format = "%Y-%m-%d")
+
+#### Индекс мосбиржи ####
+
+se <- data[5:8]
+
+se_index <- NULL
+for (i in 1: 109){
+  
+  x <- t(se[i,])
+  se_index <- rbind(se_index, x)
+}
+se_index
+
+se_index2 <- as.data.frame.numeric(se_index)
+
+
+#### Промышленное производство ####
+
+prod_ind <- data[9]
+
+pi <- NULL
+for (i in 1: 109){
+  
+  x <- c("Нет данных", "Нет данных", "Нет данных", prod_ind[i,])
+  x <- as.data.frame(x)
+  pi <- rbind(pi, t(x))
+}
+
+pi2 <- as.numeric(pi)
+pi2 <- as.data.frame(pi2)
+
+
+
+#### Индекс AA облигаций ####
+
+AA <- data[10:13]
+
+AA2 <- NULL
+for (i in 1: 109){
+  
+  x <- t(AA[i,])
+  AA2 <- rbind(AA2, x)
+}
+AA2
+
+AA3 <- as.numeric(AA2)
+AA3
+
+#### Индекс BBB облигаций ####
+
+BBB <- data[14:17]
+
+BBB2 <- NULL
+for (i in 1: 109){
+  
+  x <- t(BBB[i,])
+  BBB2 <- rbind(BBB2, x)
+}
+BBB2
+
+BBB3 <- as.numeric(BBB2)
+BBB3
+
+
+
+#### Строим графички индексов ####
+
+library(ggplot2)
+forplot <- data.frame(dates3$dates2, dates3$AA3, dates3$BBB3)
+forplot <- na.omit(forplot)
+`colnames<-`(forplot ,c("date", "AA", "BBB"))
+str(forplot)
+
+
+ggplot(data = dates5, aes(dates2, slope)) + geom_line()
+?geom_line
+
+
+#### CPI ####
+
+prices <- read_excel("CPI for R.xlsx")
+
+#Сводим к предыдущей задаче
+cpi <- NULL
+for (i in 1: 10){
+  
+  x <- t(prices[i])
+  cpi <- rbind(cpi, x)
+}
+cpi
+
+cpi2 <- as.data.frame(cpi)
+
+
+# Меняем скрипт под CPI
+CPI <- NULL
+for (i in 1: 12){
+  
+  x <- t(cpi2[i,])
+  CPI <- rbind(CPI, x)
+}
+CPI
+
+ipc <- as.data.frame(CPI)
+ipc2 <- ipc[1:109,]
+ipc2 <- as.data.frame(ipc2)
+
+
+#Добавляем пропуски как в предыдщуих данных
+ipc3 <- NULL
+for (i in 1: 109){
+  
+  x <- c("Нет данных", "Нет данных", "Нет данных", ipc2[i,])
+  x <- as.data.frame(x)
+  ipc3 <- rbind(ipc3, t(x))
+}
+
+ipc4 <- as.data.frame(ipc3)
+ipc4$V4 <- as.numeric(ipc4$V4)
+str(ipc4)
+
+ipc5 <- NULL
+for (i in 1: 109){
+  
+  x <- t(ipc4[i,])
+  ipc5 <- rbind(ipc5, x)
+}
+ipc5
+
+ipc6 <- as.numeric(ipc5)
+ipc6 <- as.data.frame(ipc6)
+
+
+
+#### Кривая бескупонной доходности ####
+kbd <- read_excel("zcyc_ranges.xlsx")
+
+# install.packages("lubridate")
+library(lubridate)
+
+
+x <- kbd$tradedate
+x <- as.Date(x)
+
+# Года
+year <- format(x, format="%Y")
+year <- as.numeric(year)
+year <- as.data.frame(year)
+
+# Месяцы
+month <- format(x, format="%m")
+month <- as.numeric(month)
+month <- as.data.frame(month)
+
+# Выбирае разные года
+kbd3 <- data.frame(kbd, year, month)
+
+#### Разделение по годам ####
+
+data2014 <- kbd3[kbd3$year == 2014, ]
+data2015 <- kbd3[kbd3$year == 2015, ]
+data2016 <- kbd3[kbd3$year == 2016, ]
+data2017 <- kbd3[kbd3$year == 2017, ]
+data2018 <- kbd3[kbd3$year == 2018, ]
+data2019 <- kbd3[kbd3$year == 2019, ]
+data2020 <- kbd3[kbd3$year == 2020, ]
+data2021 <- kbd3[kbd3$year == 2021, ]
+data2022 <- kbd3[kbd3$year == 2022, ]
+data2023 <- kbd3[kbd3$year == 2023, ]
+
+#Много циклов
+
+date2014 <- NULL
+for (i in 1:12) {
+  x <- data2014[data2014$month == i,]
+  m <- x[x$tradedate == max(x$tradedate),]
+  date2014 <- rbind(date2014, m)
+}
+
+
+date2015 <- NULL
+for (i in 1:12) {
+  x <- data2015[data2015$month == i,]
+  m <- x[x$tradedate == max(x$tradedate),]
+  date2015 <- rbind(date2015, m)
+}
+
+date2016 <- NULL
+for (i in 1:12) {
+  x <- data2016[data2016$month == i,]
+  m <- x[x$tradedate == max(x$tradedate),]
+  date2016 <- rbind(date2016, m)
+}
+
+date2017 <- NULL
+for (i in 1:12) {
+  x <- data2017[data2017$month == i,]
+  m <- x[x$tradedate == max(x$tradedate),]
+  date2017 <- rbind(date2017, m)
+}
+
+date2018 <- NULL
+for (i in 1:12) {
+  x <- data2018[data2018$month == i,]
+  m <- x[x$tradedate == max(x$tradedate),]
+  date2018 <- rbind(date2018, m)
+}
+
+date2019 <- NULL
+for (i in 1:12) {
+  x <- data2019[data2019$month == i,]
+  m <- x[x$tradedate == max(x$tradedate),]
+  date2019 <- rbind(date2019, m)
+}
+
+date2020 <- NULL
+for (i in 1:12) {
+  x <- data2020[data2020$month == i,]
+  m <- x[x$tradedate == max(x$tradedate),]
+  date2020 <- rbind(date2020, m)
+}
+
+date2021 <- NULL
+for (i in 1:12) {
+  x <- data2021[data2021$month == i,]
+  m <- x[x$tradedate == max(x$tradedate),]
+  date2021 <- rbind(date2021, m)
+}
+
+date2022 <- NULL
+for (i in 1:12) {
+  x <- data2022[data2022$month == i,]
+  m <- x[x$tradedate == max(x$tradedate),]
+  date2022 <- rbind(date2022, m)
+}
+
+date2023 <- NULL
+for (i in 1:12) {
+  x <- data2023[data2023$month == i,]
+  m <- x[x$tradedate == max(x$tradedate),]
+  date2023 <- rbind(date2023, m)
+}
+
+kbd4 <- rbind(date2014, date2015, date2016, date2017, date2018, date2019, 
+              date2020, date2021, date2022,date2023 )
+kbd5 <- kbd4[1:109,]
+
+kbd6 <- data.frame(kbd5$X0.25, kbd5$X20, kbd5$X30)
+
+#### Строим циклы для коротких ####
+
+#Добавляем пропуски как в предыдщуих данных
+kbd0_25 <- NULL
+kbd025 <- kbd5$X0.25
+kbd025 <- as.data.frame(kbd025)
+for (i in 1: 109){
+  
+  x <- c("Нет данных", "Нет данных", "Нет данных", kbd025[i,])
+  x <- as.data.frame(x)
+  kbd0_25 <- rbind(kbd0_25, t(x))
+}
+
+
+
+kbd0_25 <- as.data.frame(kbd0_25)
+kbd0_25$V4 <- as.numeric(kbd0_25$V4)
+
+
+kbd_short <- NULL
+for (i in 1: 109){
+  
+  x <- t(kbd0_25[i,])
+  kbd_short <- rbind(kbd_short, x)
+}
+kbd_short
+
+kbd_short <- as.numeric(kbd_short)
+kbd_short <- as.data.frame(kbd_short)
+
+#### Строим циклы для длинных 30 ####
+
+kbd30 <- NULL
+kbd301 <- kbd5$X30
+kbd301 <- as.data.frame(kbd301)
+for (i in 1: 109){
+  
+  x <- c("Нет данных", "Нет данных", "Нет данных", kbd301[i,])
+  x <- as.data.frame(x)
+  kbd30 <- rbind(kbd30, t(x))
+}
+
+
+
+kbd30 <- as.data.frame(kbd30)
+kbd30$V4 <- as.numeric(kbd30$V4)
+
+
+kbd_long30 <- NULL
+for (i in 1: 109){
+  
+  x <- t(kbd30[i,])
+  kbd_long30 <- rbind(kbd_long30, x)
+}
+
+
+kbd_long30 <- as.numeric(kbd_long30)
+kbd_long30 <- as.data.frame(kbd_long30)
+
+
+#### Строим циклы для длинных 2 ####
+
+kbd2 <- NULL
+kbd21 <- kbd5$X2
+kbd21 <- as.data.frame(kbd21)
+for (i in 1: 109){
+  
+  x <- c("Нет данных", "Нет данных", "Нет данных", kbd21[i,])
+  x <- as.data.frame(x)
+  kbd2 <- rbind(kbd2, t(x))
+}
+
+
+
+kbd2 <- as.data.frame(kbd2)
+kbd2$V4 <- as.numeric(kbd2$V4)
+
+
+kbd_long2 <- NULL
+for (i in 1: 109){
+  
+  x <- t(kbd2[i,])
+  kbd_long2 <- rbind(kbd_long2, x)
+}
+
+
+kbd_long2 <- as.numeric(kbd_long2)
+kbd_long2 <- as.data.frame(kbd_long2)
+
+
+
+
+#### Выходные данные ####
+
+
+
+
+
+dates3 <- data.frame(dates2, se_index2, pi2, AA3, BBB3, ipc6, kbd_short, kbd_long30, kbd_long2)
+
+writexl::write_xlsx(dates3, path = "dates.xlsx")
+?writexl::write_xlsx
+
+# Берем данные на конец месяца
+dates4 <- read_excel("dates fixed.xlsx")
+
+
+kbd_long21 <- na.omit(kbd_long2)
+kbd_long21 <- kbd_long21[-98,]
+dates6 <- data.frame(dates4, kbd_long21)
+
+
+
+
+dates4 <- na.omit(dates4)
+
+slope <- dates4$kbd_long30 - dates4$kbd_short
+dates5 <- data.frame(dates4, slope)
+
+#### TVAR ####
+
+install.packages("tsDyn")
+library(tsDyn)
+
+# Посмотрим наверно на стобцы
+library(aTSA)
+library(dplyr)
+
+# Смотрим на индекс
+plot(dates5$AA3, type = "l")
+adf.test(dates5$AA3)
+# Точно не стационарно
+
+# Доходности облигаций
+dates5$AA3 <- as.numeric(dates5$AA3)
+data_aa <- data.frame(dates5$dates2, dates5$AA3)
+data_bbb <- data.frame(dates5$dates2, dates5$BBB3)
+data_2 <- data.frame(dates5$dates2, dates5)
+dates5$se_index <- as.numeric(dates5$se_index )
+data_se <- data.frame(dates5$dates2, dates5$se_index)
+
+# Грузим библиотеки 
+library("knitr")
+# install.packages("texreg")
+# install.packages("tidyverse")
+# install.packages("plm")
+library("texreg") # вывод результатов регрессии в тех и html
+library("tidyverse") # подключаем ggplot2 (графики), dplyr, tidyr, etc (манипуляции с данными)
+library("plm") 
+library(PortfolioAnalytics)
+library(ROI)
+library(ROI.plugin.glpk)
+library(DEoptim)
+library(ROI.plugin.quadprog)
+library(quantmod)
+library(ggplot2)
+library(readxl)
+library(PerformanceAnalytics)
+
+
+ts_aa <- xts(x = data_aa$dates5.AA3, order.by = data_aa$dates5.dates2)
+ts_2 <- xts(x = data_aa$dates5.AA3, order.by = data_aa$dates5.dates2)
+ts_bbb <- xts(x = data_bbb$dates5.BBB3, order.by = data_bbb$dates5.dates2)
+ts_se <- xts(x = data_se$dates5.se_index, order.by = data_se$dates5.dates2)
+
+
+
+
+# Считаем доходности
+aa <- Return.calculate(ts_aa, method = "log")
+BBB <- Return.calculate(ts_bbb, method = "log")
+se <- Return.calculate(ts_se, method = "log")
+
+
+# Убираем пропуски
+aa2 <- na.omit(aa)
+BBB2 <- na.omit(BBB)
+se2 <- na.omit(se)
+
+quality <- aa2-BBB2
+
+# Строим графики
+autoplot(aa2)
+autoplot(BBB2)
+autoplot(quality)
+
+# Счиатем доходности 2 летних гос облигаций
+return_2 <- log((1+dates6$kbd_long21/100)^(1/12))
+
+# Убираем 1 наблюдение, чтобы уравнять число строк
+return_21 <- return_2[-1]
+
+# Считаем разницу в доходности
+library(dplyr)
+library(ggplot2)
+aa_spread <- (aa2-return_21)
+autoplot(aa_spread)
+
+# Теперь для BBB
+bbb_spread <- BBB2 - return_21
+autoplot(bbb_spread)
+
+# Смотрим на спред aa и BBB облигаций
+quality <- aa2 - BBB2
+autoplot(quality)
+
+# Смотрим на сет данных
+slope2 %>% plot(type = "l")
+
+
+d_kbd_short <- dates6$kbd_short %>% diff(1)
+dates7 <- dates6[-1,]
+
+# Добавляем спреды
+slope2 <- slope[-1]
+slope3 <- slope %>% diff(1)
+
+# Хотя переводить pi в разности может быть неправильно
+d_pi <- dates6$pi2 %>% diff(1)
+
+d_aa_spread <- aa_spread %>% diff(1)
+d_aa_spread <- na.omit(d_aa_spread)
+
+d_bbb_spread <- bbb_spread %>% diff(1)
+d_bbb_spread <- na.omit(d_bbb_spread)
+
+d_quality <- quality %>% diff(1)
+d_quality <- na.omit(d_quality)
+
+d_se <- se2 %>% diff(1)
+
+d_ipc <- ipc7 %>% diff()
+
+dates8 <- data.frame(dates7, aa_spread, bbb_spread, quality, slope2, se2)
+
+dates9 <- dplyr::select(dates8, -c(AA3, BBB3, kbd_long30, kbd_long21, se_index))
+
+# Переведем ipc в те же доходности 
+ipc7 <- log(dates9$ipc6/100)
+
+dates10 <- dates9[-99,]
+spread_real2 <- na.omit(spread_real)
+spread_real3 <- spread_real2[-1,]
+
+
+
+
+dates11 <- data.frame(dates10, ipc7[-99], spread_real3[2:4])
+dates12 <- dplyr::select(dates11, -c(ipc6, aa_spread, bbb_spread, quality))
+
+slope3 <- slope3[-1]
+d_pi <- d_pi[-1]
+d_kbd_short <- d_kbd_short[-1]
+dates13 <- dates6[3:108,]
+dates14 <- data.frame(dates12, slope3, d_pi, d_kbd_short, d_aa_spread, d_bbb_spread,
+                      d_quality, d_ipc, d_se[-1])
+
+
+#### TVAR Продолжение ####
+
+library(tsDyn)
+library(xts)
+library(dplyr)
+# Создаем временные ряды
+
+ts_all <- xts(x = dates12[-1], order.by = dates12$dates2)
+ts_d_all <- xts(x = dates13[-1], order.by = dates13$dates2)
+
+library(dynlm)
+library(ARDL)
+library(urca)
+library(timeSeries)
+library(aTSA)
+
+plot(data_all$pi2, type = "l")
+adf.test(data_all$pi2)
+
+
+# Обратно в data frame
+data_all <- as.data.frame(ts_all)
+data_d_all <- as.data.frame(ts_d_all)
+str(data_all)
+
+# Изменим обратно
+data_all$se2 <- as.numeric(data_all$se2)
+data_all$pi2        <- as.numeric(data_all$pi2)
+data_all$ipc7 <- as.numeric(data_all$ipc7)
+data_all$kbd_short <- as.numeric(data_all$kbd_short)
+data_all$aa_sprad <- as.numeric(data_all$aa_sprad)
+data_all$bbb_spread <- as.numeric(data_all$bbb_spread)
+data_all$quality <- as.numeric(data_all$quality)
+data_all$slope2 <- as.numeric(data_all$slope2)
+
+str(data_all)
+
+data_d_all$d_se..1. <- as.numeric(data_d_all$d_se..1.)
+data_d_all$d_ipc        <- as.numeric(data_d_all$d_ipc)
+data_d_all$d_quality <- as.numeric(data_d_all$d_quality)
+data_d_all$d_kbd_short <- as.numeric(data_d_all$d_kbd_short)
+data_d_all$d_aa_spread <- as.numeric(data_d_all$d_aa_spread)
+data_d_all$d_bbb_spread <- as.numeric(data_d_all$d_bbb_spread)
+data_d_all$d_pi <- as.numeric(data_d_all$d_pi)
+data_d_all$slope3 <- as.numeric(data_d_all$slope3)
+
+str(data_d_all)
+
+data_d_all2 <- dplyr::select(data_d_all, c(d_ipc, d_kbd_short,d_se..1.,
+                                           d_quality, d_aa_spread, d_bbb_spread,
+                                           d_pi, slope3))
+
+
+# Проверяем на стационарность как в статье
+# AAA
+data_all$aa_sprad %>% plot(type = "l")
+data_all$aa_sprad %>% adf.test()
+# Стационарно, но в периоды кризисов явно увеличвается
+# дисперсия
+
+# BBB
+data_all$bbb_spread.1 %>% plot(type = "l")
+data_all$bbb_spread.1 %>% adf.test()
+# То же самое
+
+# Quality
+data_all$quality.1 %>% plot(type = "l")
+data_all$quality.1 %>% adf.test()
+# То же самое
+
+# Kbd_short
+data_all$kbd_short %>% plot(type = "l")
+data_all$kbd_short %>% adf.test()
+# Явная нестационарность
+
+# SE
+data_all$se2 %>% plot(type = "l")
+data_all$se2 %>% adf.test()
+# Поохоже на  стационарность, хотя есть разница в дисперсии
+
+# PI
+data_all$pi2 %>% plot(type = "l")
+data_all$pi2 %>% adf.test()
+# Тест говорит, что стационарно, но по графику не очень похоже
+
+# Slope
+data_all$slope2 %>% plot(type = "l")
+data_all$slope2 %>% adf.test()
+# Не очень похоже по графику и тест на грани
+
+
+# Теперь первые разности
+
+
+# AAA
+data_all$aa_spread %>% diff() %>% plot(type = "l")
+data_all$aa_spread %>% diff() %>% adf.test()
+# Стационарно, но в периоды кризисов дисперсия очент сильно
+# увеличвается
+
+# BBB
+data_all$bbb_spread %>% diff() %>% plot(type = "l")
+data_all$bbb_spread %>% diff() %>% adf.test()
+# То же самое
+
+# Quality
+data_all$quality %>% diff() %>% plot(type = "l")
+data_all$quality %>% diff() %>% adf.test()
+# То же самое
+
+# Kbd_short
+data_all$kbd_short %>% diff() %>% plot(type = "l")
+data_all$kbd_short  %>% diff()%>% adf.test()
+# Стационарно, но опять дисперсия в кризисы
+
+# SE
+data_all$se2 %>% diff() %>% plot(type = "l")
+data_all$se2 %>% diff() %>% adf.test()
+# Стационарно
+
+# PI
+data_all$pi2 %>% diff() %>% plot(type = "l")
+data_all$pi2 %>% diff() %>% adf.test()
+# Стационарно
+
+# Slope
+data_all$slope2 %>% diff() %>% plot(type = "l")
+data_all$slope2 %>% diff() %>% adf.test()
+# Стационарно, но опять дисперсия
+
+
+# Проверяем на коинтеграцию как в статье 
+coint_bbb <- dplyr::select(data_all, bbb_spread, 
+                          kbd_short, se2, pi2)
+str(data_all)
+
+jotest_bbb <- ca.jo(coint_bbb, type="trace", K=2, 
+                ecdet="none", spec="longrun")
+summary(jotest_aa)
+# На 1% уровне значимости считаем, что тут 1 вектор
+# На 5% уровне значимости считаем, что тут 2 вектора
+
+?ca.jo
+
+# Формируем стационарынй ряд
+f <- coint_bbb$bbb_spread + 4.743814e-04*coint_bbb$kbd_short + 
+  1.350297e-02*coint_bbb$se2 +
+  8.362011e-05*coint_bbb$pi2
+
+plot(f, type = "l")
+adf.test(f)
+# Коинтегрирующий вектор существует
+
+
+coint_aa <- dplyr::select(data_all, aa_sprad, 
+                          kbd_short, se2, pi2)
+str(data_all)
+
+jotest_aa <- ca.jo(coint_aa, type="trace", K=2, 
+                   ecdet="none", spec="longrun")
+summary(jotest_aa)
+# На 1% уровне значимости считаем, что тут 1 вектор
+# На 5% уровне значимости считаем, что тут 2 вектора
+
+?ca.jo
+
+# Формируем стационарынй ряд
+f <- coint_aa$aa_spread + 0.0003386477*coint_aa$kbd_short + 
+  0.0678406034*coint_aa$se2 +
+  0.0002202215*coint_aa$pi2
+
+plot(f, type = "l")
+adf.test(f)
+# Коинтегрирующий вектор существует
+
+coint_quality <- dplyr::select(data_all, quality, 
+                          kbd_short, se2, pi2)
+str(data_all)
+
+jotest_quality <- ca.jo(coint_quality, type="trace", K=2, 
+                   ecdet="none", spec="longrun")
+summary(jotest_quality)
+
+# Формируем стационарынй ряд
+f <- coint_quality$quality - 0.0002053414*coint_quality$kbd_short + 
+  0.0699902834*coint_quality$se2 +
+  0.0001727955*coint_quality$pi2
+
+plot(f, type = "l")
+adf.test(f)
+# Коинтегрирующий вектор существует
+
+
+mod2 <- ardl(aa_spread ~ se2 + pi2 + kbd_short + slope2
+               , data = data_all, order = c(1,1, 1, 1, 1) )
+summary(mod2)
+
+#запишем в форме коррекции ошибок
+mod3 <- recm(mod2, case = 2)
+summary(mod3)
+library(car)
+crPlots(mod3)
+
+# Если строим на данных без 2022 года 
+data_all_short <- data_all[24:96,]
+mod4 <- ardl(aa_spread ~ se_index + pi2 + kbd_short + slope2
+             , data = data_all_short, order = c(1,1, 1, 1, 1) )
+summary(mod4)
+
+mod5 <- recm(mod4, case = 2)
+summary(mod5)
+crPlots(mod5)
+
+
+
+jotest <- ca.jo(data_all[-c(6,7)], type="trace", K=2, 
+                ecdet="none", spec="longrun")
+summary(jotest)
+
+
+# Если попробовать Markov switching
+# install.packages("MSwM")
+library(MSwM)
+modMS <- msmFit(mod_MS, k =2, sw = rep(TRUE, 5))
+?msmFit
+
+
+library(stats)
+mod_MS <- glm(aa_sprad ~ kbd_short + pi2 +
+                slope2 + se2 , data = data_all3)
+summary(mod_MS)
+
+str(data_all3)
+
+
+
+
+
+
+####  VECM ####
+library(tsDyn)
+library(vars)
+library(urca)
+library(forecast)
+library(tidyverse)
+
+lagselection <- VARselect(data_all, lag.max = 6)
+lagselection$selection
+# Лучше 3
+
+# Выберем данные для aa_spread
+aa_data_d_all2 <- dplyr::select(data_d_all2, -c(d_bbb_spread, d_quality))
+
+jotest_aa <- ca.jo(coint_aa, type="trace", K=1) 
+summary(jotest_aa)
+
+jotest_d_aa <- ca.jo(aa_data_d_all2, type="trace", K=2)
+summary(jotest_d_aa)
+
+# Делаем VECM
+
+mod_vecm <- VECM(coint_aa, 1, r =1, estim = "2OLS" )
+summary(mod_vecm)
+
+mod_dvecm <- VECM(aa_data_d_all2, 1, r = 2, estim = "2OLS"  )
+summary(mod_dvecm)
+
+# Тестируем
+
+mode_in_var <- vec2var(jotest_aa, r =1)
+mdvar <- vec2var(jotest_d_aa, r =2)
+
+# тестируем на корреляцию
+serial <- serial.test(mode_in_var, lags.pt = 5, type = "PT.adjusted")
+serial
+d_serial <- serial.test(mdvar, lags.pt = 5, type = "PT.adjusted")
+d_serial
+
+
+# ARCH?
+
+arch1 <- arch.test(mode_in_var, lags.multi = 15, multivariate.only = TRUE)
+arch1
+# Не ARCH 
+
+# Нормальность остатков
+nor <- normality.test(mode_in_var, multivariate.only = TRUE)
+nor
+mode_in_var$resid %>% plot()
+
+# Функция импульсного отклика
+irf <- irf(mode_in_var, impulse = "kbd_short", 
+           response = "aa_spread", n.ahead = 20, 
+           boot = TRUE)
+plot(irf)
+
+# Variance decomposition
+decomp <- fevd(mode_in_var, n.ahead = 10)
+plot(decomp)
+ 
+
+#### Продолжение VECM ####
+
+# Регрессируем спреды
+library(readxl)
+spread_real <- read_xlsx("spreads.xlsx") 
+
+str(data_all)
+
+
+aa_mod_sperad <- lm(data_all$aa_sprad ~ 
+     kbd_short  + se2 + pi2 + slope2,data = data_all)
+summary(aa_mod_sperad)
+
+bbb_mod_sperad <- lm(data_all$bbb_spread.1 ~ 
+                      kbd_short  + se2 + pi2 +slope2,data = data_all)
+summary(bbb_mod_sperad)
+
+quality_mod_spread <- lm(data_all$quality.1 ~ 
+                       kbd_short  + se2 + pi2 +slope2 ,data = data_all)
+summary(quality_mod_spread)
+
+# Достаем ect
+aa_ect <- aa_mod_sperad$residuals
+bbb_ect <- bbb_mod_sperad$residuals
+quality_ect <- quality_mod_spread$residuals
+
+data_all3 <- data.frame(data_all, aa_ect, bbb_ect, quality_ect)
+
+
+# Строим модель
+aa_main_mod <- lm(diff(data_all3$aa_sprad, 1) ~ diff(lag(data_all3$se2, n =1L), 1) + 
+                    diff(lag(data_all3$pi2, n =1L), 1) +
+                    diff(lag(data_all3$kbd_short, n =1L), 1) +
+                    diff(lag(data_all3$slope2, n =1L), 1)+
+                    diff(lag(data_all3$aa_sprad, n =1L), 1)
+                    , data = data_all3)
+summary(aa_main_mod)
+vif(aa_main_mod)
+crPlots(aa_main_mod)
+library(lmtest)
+library(sandwich)
+V_new <- vcovHC(aa_main_mod, type = "HC0")
+coeftest(aa_main_mod, V_new)
+
+
+# Для BBB
+bbb_main_mod <- lm(diff(data_all3$bbb_spread.1, 1) ~ diff(lag(data_all3$se2, n =1L), 1) + 
+                    diff(lag(data_all3$pi2, n =1L), 1) +
+                    diff(lag(data_all3$kbd_short, n =1L), 1) +
+                    diff(lag(data_all3$slope2, n =1L), 1)+
+                    diff(lag(data_all3$bbb_spread.1, n =1L), 1)
+                  , data = data_all3)
+summary(bbb_main_mod)
+vif(bbb_main_mod)
+crPlots(bbb_main_mod)
+library(lmtest)
+library(sandwich)
+V_new <- vcovHC(bbb_main_mod, type = "HC0")
+coeftest(bbb_main_mod, V_new)
+
+
+
+# Для quality
+quality_main_mod <- lm(diff(data_all3$quality.1, 1) ~ diff(lag(data_all3$se2, n =1L), 1) + 
+                     diff(lag(data_all3$pi2, n =1L), 1) +
+                     diff(lag(data_all3$kbd_short, n =1L), 1) +
+                     diff(lag(data_all3$slope2, n =1L), 1)+
+                     diff(lag(data_all3$quality.1, n =1L), 1)
+                   , data = data_all3)
+summary(quality_main_mod)
+vif(quality_main_mod)
+crPlots(quality_main_mod)
+V_new <- vcovHC(quality_main_mod, type = "HC0")
+coeftest(quality_main_mod, V_new)
+
+
+
+# Строим ardl
+library(ARDL)
+mod_ardl_aa <- ardl(aa_sprad ~ pi2 + se2 + kbd_short + slope2,data = data_all3, 
+                 order = c(1, 1, 1, 1, 1))
+summary(mod_ardl)
+
+recm <- recm(mod_ardl_aa, case = 2)
+summary(recm)
+
+
+mod_ardl_bbb <- ardl(bbb_spread.1 ~ pi2 + se2 + kbd_short + slope2,data = data_all3, 
+                    order = c(1, 1, 1, 1, 1))
+summary(mod_ardl)
+
+recm <- recm(mod_ardl_bbb, case = 2)
+summary(recm)
+
+
+mod_ardl_quality <- ardl(quality.1 ~ pi2 + se2 + kbd_short + slope2,data = data_all3, 
+                    order = c(1, 1, 1, 1, 1))
+summary(mod_ardl_quality)
+
+recm <- recm(mod_ardl_quality, case = 2)
+summary(recm)
+
+
+lag(diff(data_all3$aa_sprad, 1), n = 1L)
+
+
+# Посмотрим на vif
+library(car)
+vif(aa_main_mod)
+vif(aa_main_mod2)
+crPlots(aa_main_mod2)
+
+
+#### Теперь модель с цепями Маркова ####
+library(MSwM)
+
+# Для АА
+MS_aa <- msmFit(aa_main_mod, k = 2, sw = rep(TRUE, 7))
+summary(MS_aa)
+plotReg(MS_aa)
+plotProb(MS_aa)
+plotDiag(MS_aa)
+
+data_what8$AAA_спред %>% plot(type = "l")
+
+
+# Для BBBB
+MS_bbb <- msmFit(bbb_main_mod, k = 2, sw = rep(TRUE, 7))
+summary(MS_bbb)
+plotReg(MS_bbb)
+plotProb(MS_bbb)
+plotDiag(MS_bbb)
+# Остатки нестационарны
+
+
+# Для quality
+MS_quality <- msmFit(quality_main_mod, k = 2, sw = rep(TRUE, 7))
+summary(MS_quality)
+plotReg(MS_quality)
+plotProb(MS_quality)
+plotDiag(MS_quality)
+
+
+
+
+
+
+#### TVAR ####
+
+library(tsDyn)
+
+# Пытаемся построить lineVAR
+# Выбираем экзогенные регрессоры
+ex <- dplyr::select(data_all3, pi2, kbd_short, slope2, se2, aa_sprad,  )
+ex2_aa <- dplyr::select(data_all3, ipc7..99.,  pi2, kbd_short, slope2, se2, aa_sprad)
+ex2_bbb <- dplyr::select(data_all3, ipc7..99.,  pi2, kbd_short, slope2, se2, bbb_spread.1)
+ex2_quality <- dplyr::select(data_all3, ipc7..99.,  pi2, kbd_short, slope2, se2,  quality.1 )
+ipc <- dplyr::select(data_all3, ipc7..99.)
+
+# Строим TVAR
+# В разностях
+mod_tvar_aa <- TVAR(data = ex2_aa, lag = 1, model = "MTAR",
+                 trace =TRUE, plot = TRUE, mTh = 1, trim = 0.2)
+summary(mod_tvar_aa)
+# Не в разностях
+mod_tvar_aa_nd <- TVAR(data = ex2_aa, lag = 1, model = "TAR",
+                 trace =TRUE, plot = TRUE, mTh = 1)
+summary(mod_tvar)
+# При инфляции за месяц в 12.15% в годовом выражении
+
+
+# Теперь для bbb
+mod_tvar_bbb <- TVAR(data = ex2_bbb, lag = 1, model = "MTAR",
+                    trace =TRUE, plot = TRUE, mTh = 1)
+summary(mod_tvar_bbb)
+
+# Не в разностях
+mod_tvar_bbb_nd <- TVAR(data = ex2_bbb, lag = 1, model = "TAR",
+                       trace =TRUE, plot = TRUE, mTh = 1)
+summary(mod_tvar_bbb_nd)
+
+
+
+
+# Теперь для quality
+mod_tvar_quality <- TVAR(data = ex2_quality, lag = 1, model = "MTAR",
+                     trace =TRUE, plot = TRUE, mTh = 1)
+summary(mod_tvar_quality)
+
+# Не в разностях
+mod_tvar_quality_nd <- TVAR(data = ex2_quality, lag = 1, model = "TAR",
+                        trace =TRUE, plot = TRUE, mTh = 1)
+summary(mod_tvar_quality_nd)
+
+
+
+# Эксперименты
+# В разностях
+mod_tvar_aa_exp <- TVAR(data = ex2_aa, lag = 1, model = "MTAR",
+                                       trace =TRUE, plot = TRUE, mTh = 1, trim = 0.25)
+summary(mod_tvar_aa_exp)
+
+#### Стационарность и коинтеграция ####
+
+# Смотрим стационарны ли вообще ряды
+# И есть ли коинтеграция
+
+library(urca)
+library(dplyr)
+ut_aa_l <- ur.ers(ex2_aa$aa_sprad)
+ut_aa_d <- ur.ers(diff(ex2_aa$aa_sprad))
+ut_aa_l
+ut_aa_d
+# Стационарен как в разностях так и в уронвях
+
+ut_ipc_l <- ur.ers(ex2_aa$ipc7..99.)
+ut_ipc_d <- ur.ers(diff(ex2_aa$ipc7..99.))
+ut_ipc_l
+ut_ipc_d
+# Стационарен как в разностях так и в уронвях
+
+ut_kbd_l <- ur.ers(ex2_aa$kbd_short)
+ut_kbd_d <- ur.ers(diff(ex2_aa$kbd_short))
+ut_kbd_l
+ut_kbd_d
+# А вот КБД стационарна только в разностях, на уровнях нет
+ex2_aa$kbd_short %>% diff() %>% plot(type = "l")
+
+
+ut_se_l <- ur.ers(ex2_aa$se2)
+ut_se_d <- ur.ers(diff(ex2_aa$se2))
+ut_se_l
+ut_se_d
+# Оба стационарны, но в разностях статистика меньше
+
+ut_pi_l <- ur.ers(ex2_aa$pi2)
+ut_pi_d <- ur.ers(diff(ex2_aa$pi2))
+ut_pi_l
+ut_pi_d
+# Стационарно в уровнях и разностях, хотя в уровнях
+# на грани
+
+ut_sl_l <- ur.ers(ex2_aa$slope2)
+ut_sl_d <- ur.ers(diff(ex2_aa$slope2))
+ut_sl_l
+ut_sl_d
+# Стационарен на в уровнях и разностях, но в уровнях
+# совсем немного выше 5% уровня значимости
+
+
+# Переведем в разности
+kbd <- kbd_short %>% na.omit()
+kbd_f <- kbd[-97,]
+
+
+
+#### Построение описательных графиков ####
+
+data_what <- read_excel("dates fixed2.xlsx")
+data_what2 <- na.omit(data_what)
+
+# data_add <- read_excel("dates fixed3.xlsx")
+# data_add2 <- na.omit(data_add)
+# data_add2$B_spread <- as.numeric(data_add2$B_spread)
+# B_spread <- write_xlsx(data_add2, path = "b_spread.xlsx")
+# library(writexl)
+
+
+# Меняем форматы
+data_what2$rvi <- as.numeric(data_what2$rvi)
+data_what2$se_index <- as.numeric(data_what2$se_index)
+
+
+# Хочу графички 
+library(ggplot2)
+
+# ИПП
+ggplot(data = data_what2, aes(dates2, pi2)) + geom_line(aes(dates2, pi2),
+                                                        linetype = 1, size = 1) +
+  ylab("Индекс промышленного производства") + xlab("")
+
+# Спред
+ggplot(data = data_what2, aes(dates2, AA3)) + geom_line(aes(dates2, AA3),
+                                                        linetype = 1, size = 1) +
+  ylab("AAA спред") + xlab("")
+
+
+# Индекс волатильности
+ggplot(data = data_what2, aes(dates2, rvi)) + geom_line(aes(dates2, rvi),
+                                                        linetype = 1, size = 1) +
+  ylab("RVI") + xlab("")
+
+
+
+# Краткосрочная и долгосрочная ставка
+ggplot(data = data_all2_with_brent, aes(x = Даты, y = target, color=Легенда, )) + geom_line(linetype = 1, linewidth = 1) +
+  ylab("Спреды корпоративных облигаций") + xlab("") + scale_color_manual(values = c("#6E7B8B", "black", "grey"))
+
+data_1 <- dplyr::select(data_what7, -AAA_спред) %>% mutate(type="AAA_спред")
+names(data_1)[9] <- 'target'
+data_2 <- dplyr::select(data_what7, -AAA_спред) %>% mutate(type="BAA_спред")
+names(data_2)[9] <- 'target'
+data_3 <- dplyr::select(data_what7, -AAA_спред) %>% mutate(type="B_спред")
+names(data_2)[9] <- 'target'
+data_all <- cbind(data_extra ,target, type )
+names(data_all)[14] <- 'Легенда'
+
+type <- c(rep("AAA_спред", 106), rep("BAA_спред", 106), rep("B_спред", 106))
+target <- c(data_what7$AAA_спред, data_what7$BAA_спред, data_what7$B_спред)
+data_extra <- rbind(data_what7, data_what7)
+data_extra <- rbind(data_extra, data_what7)
+
+
+
+#### Замена графиков из excel ####
+data_graph <- read_excel("corp bonds volume.xlsx")
+data_all2_with_brent <- read_excel("data_all2_with_brent.xlsx")
+
+View(data_graph)
+str(data_graph)
+
+
+## График роста облигаций
+spread_graph <- ggplot(data = data_graph, aes(x = Дата))
+
+spread_graph <- spread_graph + geom_line(aes(y = `Общий объем государственных облигаций`,
+                                         colour = "Общий объем государственных облигаций"), linewidth = 1)
+
+spread_graph <- spread_graph + geom_line(aes(y = `Общий объем корпоративных облигаций`,
+                                         colour = "Общий объем корпоративных облигаций"), linewidth = 1)
+
+
+colors <- c("Общий объем государственных облигаций" = "black", "Общий объем корпоративных облигаций" = "coral")
+
+spread_graph <-  spread_graph + labs(x = "Год",
+     y = "Объем рынка государственных и корпоративных облигаций",
+     color = "Легенда:") +
+  scale_color_manual(values = colors)
+spread_graph <- spread_graph + theme(legend.position = "bottom")
+
+spread_graph
+
+
+## График роста облигаций
+spread_graph1 <- ggplot(data = data_all2_with_brent, aes(x = Даты))
+
+spread_graph1 <- spread_graph1 + geom_line(aes(y = AAA_спред,
+                                             colour = "AAA спред"), linewidth = 1)
+
+spread_graph1 <- spread_graph1 + geom_line(aes(y = BAA_спред,
+                                             colour = "BAA спред"), linewidth = 1)
+
+
+colors <- c("AAA спред" = "black", "BAA спред" = "coral")
+
+spread_graph1 <-  spread_graph1 + labs(x = "Год",
+                                     y = "Кредитные спреды облигаций с кредитным рейтингом AAA и BAA",
+                                     color = "Легенда:") +
+  scale_color_manual(values = colors)
+spread_graph1 <- spread_graph1 + theme(legend.position = "bottom")
+
+spread_graph1
+
+data_graph$`Объем корпоративных еврооблигаций`
+
+## Графики еврооблигаций
+cut <- c("Общий объем корпоративных облигаций", "Объем корпоративных еврооблигаций")
+corp_graph <- ggplot(data=data_graph, aes(x=Дата, group=cut, fill=cut)) +
+  geom_density(adjust=1.5)
+corp_graph
+
+
+# Краткосрочная и долгосрочная ставка
+ggplot(data = data_all2_with_brent, aes(x = Даты, y = target, color=Легенда, )) + geom_line(linetype = 1, linewidth = 1) +
+  ylab("Спреды корпоративных облигаций") + xlab("") + scale_color_manual(values = c("black", "grey"))
+
+
+data_1 <- dplyr::select(data_graph, - 'Общий объем корпоративных облигаций') %>% mutate(type='Общий объем корпоративных облигаций')
+names(data_1)[9] <- 'target'
+data_2 <- dplyr::select(data_all2_with_brent, -AAA_спред) %>% mutate(type="BAA_спред")
+names(data_2)[9] <- 'target'
+data_all_graph <- cbind(data_all2_with_brent ,target, type )
+names(data_all)[14] <- 'Легенда'
+
+type <- c(rep("AAA_спред", 106), rep("BAA_спред", 106), rep("B_спред", 106))
+target <- c(data_what7$AAA_спред, data_what7$BAA_спред, data_what7$B_спред)
+data_extra <- rbind(data_what7, data_what7)
+data_extra <- rbind(data_extra, data_what7)
+
+
+
+# Инфляция
+ggplot(data = data_what3, aes(dates2, ipc10)) + geom_line(aes(dates2, ipc10),
+                                                        linetype = 1, size = 1) +
+  ylab("Инфляция по месяцам, в %") + xlab("")
+
+
+# Можем построить график для наклона
+ggplot(data = data_what3, aes(dates2, slope10)) + geom_line(aes(dates2, slope10),
+                                                          linetype = 1, size = 1) +
+  ylab("Наклон КБД, в п.п.") + xlab("")
+
+
+
+#### Смотрим описательные статистики ####
+
+# Переведем ipc в те же доходности 
+ipc10 <- ((data_what2$ipc6/100)-1)*100
+slope10 <- data_what2$kbd_long30 -  data_what2$kbd_short
+data_what3 <- data.frame(data_what2, ipc10, slope10)
+
+
+# data_what3 <- subset(data_what2, select = - c(AA3, BBB3))
+
+# Загружаем спреды
+data_sperads <- read_excel("spreads2.xlsx")
+
+# Меняем структуру
+data_sperads$aa_sprad <- as.numeric(data_sperads$aa_sprad)
+data_sperads$bbb_spread <- as.numeric(data_sperads$bbb_spread)
+data_sperads$quality <- as.numeric(data_sperads$quality)
+data_sperads$B_spread <- as.numeric(data_sperads$B_spread)
+
+# Соединяем
+data_what4 <- data.frame(data_what3, data_sperads[,-1])
+str(data_what4)
+data_what4 <- subset(data_what4, select = - c(AA3, BBB3, ipc6))
+
+
+# slope <- data_what4$kbd_long30 - data_what4$kbd_short
+# data_what4 <- data.frame(data_what4, slope)
+
+
+# Переименуем столбцы
+names(data_what4) <- c("Даты", "Индекс МосБиржи", "ИПП", "Краткосрочная ставка",
+                       "Долгосрочная ставка", "RVI", "ИПЦ", "Наклон", "AAA спред", "BAA спред", "Качество", "B спред")
+
+
+
+# Смотрим описательные статистики
+library(stargazer)
+stargazer(data_what7, type = "html", summary = TRUE, out = "stat.html", iqr = TRUE)
+str(data_tvar_aa_all2_brent)
+STAT <- data.frame(data_all2_with_brent, data_all2_with_brent$brent_d)
+?stargazer
+View(data_all2_with_brent)
+stargazer(data_what7, type = "html", summary = TRUE, out = "stat.html")
+
+data
+View(data_all2_with_brent)
+#### Проверяем на стационарность ####
+
+# Уберем пропуски и добавим нефть
+write_xlsx( data_what4, "data_what4.xlsx")
+data_what4 <- read_excel("data_what4.xlsx")
+
+# RVI
+data_what4$RVI %>% plot(type = "l")
+data_what4$RVI %>% adf.test()
+# Стационарно, но есть периоды высокой дисперсии
+
+# AAA
+data_what4$AAA.спред %>% plot(type = "l")
+data_what4$AAA.спред %>% adf.test()
+# То же самое
+
+# BAA 
+data_what4$BAA.спред %>% plot(type = "l")
+data_what4$BAA.спред %>% adf.test()
+# То же самое
+
+
+# SE
+data_what4$`Индекс МосБиржи` %>% plot(type = "l")
+data_what4$`Индекс МосБиржи` %>% adf.test()
+# Тут точно переход к разностям
+
+# Считаем доходность МосиБиржи
+ts_se <- xts(x = data_what4$'Индекс МосБиржи', order.by = data_what4$Даты)
+se10 <- Return.calculate(ts_se, method = "log")
+
+
+# Добавляем в датасет
+data_what4 <- data.frame(data_what4, se10)
+
+# Смотрим на стационарность
+data_what4$se10 %>% plot(type = "l")
+data_what4$se10 %>% adf.test()
+
+# PI
+data_what4$ИПП %>% plot(type = "l")
+data_what4$ИПП %>% adf.test()
+# Стационарно с разной волатильностью
+
+# CPI
+data_what4$ИПЦ %>% plot(type = "l")
+data_what4$ИПЦ %>% adf.test()
+# Стационарно, и так наврено лучше
+data_what4 <- data.frame(data_what4, cpi10)
+
+
+# kbd_short
+data_what4$Краткосрочная.ставка %>% plot(type = "l")
+data_what4$Краткосрочная.ставка %>% adf.test()
+# Не стационарно
+
+# Перейдем к разностям и посмотрим
+d_kbd_short10 <- diff(data_what4$Краткосрочная.ставка, 1)
+d_kbd_short10 %>% plot(type = "l")
+d_kbd_short10 %>% adf.test()
+# Теперь стационарно
+
+view(data_what4)
+
+# kbd_long
+data_what4$Долгосрочная.ставка  %>% plot(type = "l")
+data_what4$Долгосрочная.ставка %>% adf.test()
+# Не стационарно, аналогично
+
+d_kbd_long10 <- diff(data_what4$Долгосрочная.ставка, 1)
+d_kbd_long10 %>% plot(type = "l")
+d_kbd_long10 %>% adf.test()
+
+
+# Slope
+data_what4$Наклон  %>% plot(type = "l")
+data_what4$Наклон %>% adf.test()
+# Не стационарно
+
+d_slope <- diff(data_what4$Наклон, 1)
+d_slope %>% plot(type = "l")
+d_slope %>% adf.test()
+# Теперь точно стационарно
+
+# Перейдем к разностям спредов
+# AAA
+AAA_spread_d_small <- diff(data_what4$AAA.спред, 1)
+AAA_spread_d_small %>% plot(type = "l")
+AAA_spread_d_small %>% adf.test()
+
+# BAA
+BAA_spread_d_small <- diff(data_what4$BAA.спред, 1)
+BAA_spread_d_small %>% plot(type = "l")
+BAA_spread_d_small %>% adf.test()
+
+# Разность RVI
+RVI_d_small <- diff(data_what4$RVI, 1)
+RVI_d_small %>% plot(type = "l")
+RVI_d_small %>% adf.test()
+
+# Доходность нефти
+ts_bernt_small <- xts(x = data_what4$Bernt, order.by = data_what4$Даты)
+brent_return_small <- Return.calculate(ts_bernt_small, method = "log")
+brent_return_small %>% plot(type = "l")
+brent_return_small %>% adf.test()
+
+
+# ИПЦ
+cpi_small <- diff(data_what4$ИПЦ, 1)
+cpi_small %>% plot(type = "l")
+cpi_small %>% adf.test()
+
+# ИПП
+pi_small <- diff(data_what4$ИПП, 1)
+pi_small %>% plot(type = "l")
+pi_small %>% adf.test()
+
+
+
+# Добавим в датасет
+x <- NA
+d_kbd_short11 <- c(x, d_kbd_short10)
+d_kbd_long11 <- c(x, d_kbd_long10)
+AAA_spread_d_small <- c(x, AAA_spread_d_small)
+BAA_spread_d_small <- c(x, BAA_spread_d_small)
+d_slope1 <- c(x, d_slope)
+RVI_d_small <- c(x, RVI_d_small)
+cpi_small <- c(x, cpi_small)
+pi_small <- c(x, pi_small)
+
+
+data_what5 <- data.frame(data_what4, d_kbd_short11, d_slope1, brent_return_small,
+                         AAA_spread_d_small, BAA_spread_d_small, RVI_d_small,
+                         cpi_small, pi_small)
+
+str(data_what5)
+# Выберем нужное и переименуем
+data_what6 <- subset(data_what5, select =  c(Даты, pi_small, d_kbd_short11 ,
+                                            d_slope1, 
+                                            cpi_small, se10, RVI_d_small, AAA_spread_d_small, 
+                                            BAA_spread_d_small, brent_return_small))
+names(data_what6) <- c("Даты", "ИПП_р", "Безрисковая_ставка_р",
+                       "Наклон_р", "ИПЦ_р", "Доходность_МосБиржи", 
+                       "RVI_р", "AAA_спред_р", "BAA_спред_р", "Brent_р")
+
+# Еще раз посмотрим на статистику
+stargazer(data_all2_with_brent, type = "html", summary = TRUE, out = "stat2.html")
+
+
+#### Строим ARDL и LM ####
+
+# Подготовим данные к модели
+data_what7 <- na.omit(data_what6)
+
+# Строим модель
+mod_auto <- auto_ardl(`AAA_спред_р` ~ RVI_р + ИПП_р + `Безрисковая_ставка_р`+ 
+                        Наклон_р + ИПЦ_р + `Доходность_МосБиржи`+Brent_р, 
+                      data = data_what7, max_order = 3, selection = "BIC")
+mod_auto
+
+
+
+mod_auto1 <- auto_ardl(`BAA_спред_р` ~ RVI_р + `Безрисковая_ставка_р`+ 
+                         Наклон_р + ИПП_р + ИПЦ_р + Доходность_МосБиржи + Brent_р, 
+                       data = data_what7, max_order = 3, selection = "BIC")
+mod_auto1
+
+
+
+mod_ardl_small_aaa <- ardl(`AAA_спред_р` ~ RVI_р + ИПП_р + `Безрисковая_ставка_р`+ 
+                Наклон_р + ИПЦ_р + `Доходность_МосБиржи`+Brent_р, 
+              data = data_what7, order = mod_auto$best_order)
+summary(mod_ardl_small_aaa)
+
+
+
+mod_ardl_small_aaa <- ardl(`AAA_спред_р` ~ RVI_р + `Безрисковая_ставка_р`+ 
+                             Наклон_р + ИПП_р + ИПЦ_р + Доходность_МосБиржи + Brent_р, 
+                           data = data_what7, order = c(1,2,1, 1,0, 2, 0,  1))
+summary(mod_ardl_small_aaa)
+AIC(mod_ardl_small_aaa)
+
+multipliers(mod_ardl_small_aaa, type = "sr")
+a27 <- multipliers(mod_ardl_small_aaa, type = "lr")
+
+
+# BAA
+mod_ardl_small_baa <- ardl(`BAA_спред_р` ~ RVI_р + `Безрисковая_ставка_р`+ 
+                             Наклон_р + ИПП_р + ИПЦ_р + Доходность_МосБиржи + Brent_р, 
+                           data = data_what7, order = c(3,2,3, 0,1, 1, 1,  1))
+summary(mod_ardl_small_baa)
+AIC(mod_ardl_small_baa)
+
+multipliers(mod_ardl_small_baa, type = "sr")
+a28 <- multipliers(mod_ardl_small_baa, type = "lr")
+
+
+data_big7$AAA_спред %>% median()
+AIC(mod_MS_all_BAA_brent)
+AIC(mod_ardl_baa_rvi_d_all)
+
+# Lm
+mod_lm_small_aaa <- lm(`AAA_спред_р` ~ RVI_р + ИПП_р + `Безрисковая_ставка_р`+ 
+                         Наклон_р + ИПЦ_р + `Доходность_МосБиржи`+Brent_р, 
+                       data = data_what7)
+summary(mod_lm_small_aaa)
+AIC(mod_lm_small_aaa)
+crPlots(mod_lm_small_aaa)
+a25 <- summary(mod_lm_small_aaa)
+corrplot(cor(data_what7[-1]), addCoef.col = TRUE)
+influenceIndexPlot(mod_lm_small_aaa)
+
+
+mod_lm_small_baa <- lm(`BAA_спред_р` ~ RVI_р + ИПП_р + `Безрисковая_ставка_р`+ 
+                         Наклон_р + ИПЦ_р + `Доходность_МосБиржи`+Brent_р, 
+                       data = data_what7)
+summary(mod_lm_small_baa)
+AIC(mod_lm_small_baa)
+a26 <- summary(mod_lm_small_baa)
+
+
+# Теперь короткий вариант
+# Выбираем лаги
+mod_auto10 <- auto_ardl(`AAA_спред` ~ RVI + `Краткосрочная_ставка_р`+ 
+                        Наклон_р + `Индекс_МосБиржи_д`, 
+                      data = data_what7, max_order = 3, selection = "BIC")
+mod_auto10
+
+mod_auto11 <- auto_ardl(`BAA_спред` ~ RVI + `Краткосрочная_ставка_р`+ 
+                         Наклон_р + `Индекс_МосБиржи_д`, 
+                       data = data_what7, max_order = 3, selection = "BIC")
+mod_auto11
+
+
+# Строим модели
+mod_ardl_small_aaa <- ardl(`AAA_спред` ~ RVI + `Краткосрочная_ставка_р`+ 
+                Наклон_р + `Индекс_МосБиржи_д`
+              , data = data_what7, order = mod_auto10$best_order)
+summary(mod_ardl_small_aaa)
+
+
+mod_ardl_small_baa <- ardl(`BAA_спред` ~ RVI + `Краткосрочная_ставка_р`+ 
+                Наклон_р +`Индекс_МосБиржи_д`
+              , data = data_what7, order = mod_auto11$best_order)
+summary(mod_ardl_small_baa)
+
+
+#### Markov Switching на маленьких данных ####
+# AAA
+mod_lm_MS_small_aaa <- lm(`AAA_спред_р` ~ RVI_р + ИПП_р + `Безрисковая_ставка_р`+ 
+                            Наклон_р + ИПЦ_р + `Доходность_МосБиржи`+Brent_р, 
+                          data = data_what7)
+
+
+mod_MS_small_aaa <- msmFit(mod_lm_MS_small_aaa,k=2,p=1,
+                         sw=c(rep(TRUE, 10)))
+summary(mod_MS_small_aaa)
+plotProb(mod_MS_small_aaa,which=2)
+
+
+# BAA
+mod_lm_MS_small_baa <- lm(`BAA_спред_р` ~ RVI_р + ИПП_р + `Безрисковая_ставка_р`+ 
+                            Наклон_р + ИПЦ_р + `Доходность_МосБиржи`+Brent_р, 
+                          data = data_what7)
+
+
+mod_MS_small_baa <- msmFit(mod_lm_MS_small_baa,k=2,p=1,
+                           sw=c(rep(TRUE, 10)))
+summary(mod_MS_small_baa)
+plotProb(mod_MS_small_baa,which=2)
+
+#### TVAR на маленьких данных ####
+data_tvar_aaa_small<- subset(data_what7, select = c(RVI_р, Безрисковая_ставка_р,
+                                                    Наклон_р, Доходность_МосБиржи, Brent_р,
+                                                    ИПП_р, ИПЦ_р,
+                                                    AAA_спред_р))
+
+mod_tvar_small_aaa <- TVAR(data = data_tvar_aaa_small, lag = 1, model = "TAR",
+                                trace =TRUE, plot = TRUE, thVar = data_what5$RVI[-1], nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_small_aaa)
+
+
+data_tvar_baa_small<- subset(data_what7, select = c(RVI_р, Безрисковая_ставка_р,
+                                                    Наклон_р, Доходность_МосБиржи, Brent_р,
+                                                    ИПП_р, ИПЦ_р,
+                                                    BAA_спред_р))
+
+mod_tvar_small_baa <- TVAR(data = data_tvar_baa_small, lag = 1, model = "TAR",
+                           trace =TRUE, plot = TRUE, thVar = data_what5$RVI[-1], nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_small_baa)
+
+
+#### Построим корреляционные матрицы ####
+data_cor <- dplyr::select(data_what7, c(RVI , ИПП , `Краткосрочная_ставка_р`, 
+                                          Наклон_р , ИПЦ , `Индекс_МосБиржи_д`, AAA_спред ))
+names(data_what7)
+library(corrplot)
+corrplot(cor(data_cor), addCoef.col = TRUE)
+
+
+data_cor2 <- dplyr::select(data_what7, c(RVI , `Краткосрочная_ставка_р`, 
+                                        Наклон_р , `Индекс_МосБиржи_д`))
+corrplot(cor(data_cor2), addCoef.col = TRUE)
+
+# Большие данные
+data_cor3 <- dplyr::select(data_big10, c(RVI , d_kbd_short11, 
+                                         slope_d2 , se10, AAA_спред))
+corrplot(cor(data_cor3), addCoef.col = TRUE)
+
+
+#### Тестирование моделей ####
+
+mod_check <- ardl(AAA_спред ~ d_kbd_short11, 
+                  data = data_big10, order = c(2,0))
+summary(mod_check)
+
+mod_check2 <- ardl(AAA_спред ~ d_kbd_short11 + slope_d2, 
+                  data = data_big10, order = c(2,0, 0))
+summary(mod_check2)
+
+mod_check3 <- ardl(AAA_спред ~ d_kbd_short11 + slope_d2 + se10, 
+                  data = data_big10, order = c(2,0, 0, 0))
+summary(mod_check3)
+
+mod_check4 <- ardl(AAA_спред ~ d_kbd_short11 + slope_d2 + se10 + RVI, 
+                  data = data_big10, order = c(2,0, 0, 0, 0))
+summary(mod_check4)
+
+mod_list <- list(mod_check, mod_check2, mod_check3, mod_check4)
+
+
+msummary(mod_list, vcov="HC1", gof_omit = "AIC|RMSE|Log.Lik.|BIC|F", output="gt",
+         stars = c('*' = .1, '**' = .05, '***' = .01))
+plot(d_kbd_short11, type = "l")
+
+
+# Для МосБиржи
+
+mod_check <- ardl(AAA_спред ~ se10, 
+                  data = data_big10, order = c(2,0))
+summary(mod_check)
+
+mod_check2 <- ardl(AAA_спред ~ se10 + d_kbd_short11, 
+                   data = data_big10, order = c(2,0, 0))
+summary(mod_check2)
+
+mod_check3 <- ardl(AAA_спред ~ se10 + d_kbd_short11 + slope_d2, 
+                   data = data_big10, order = c(2,0, 0, 0))
+summary(mod_check3)
+
+mod_check4 <- ardl(AAA_спред ~ se10 + d_kbd_short11 + slope_d2 + RVI, 
+                   data = data_big10, order = c(2,0, 0, 0, 0))
+summary(mod_check4)
+
+mod_list <- list(mod_check, mod_check2, mod_check3, mod_check4)
+
+
+msummary(mod_list, vcov="HC1", gof_omit = "AIC|RMSE|Log.Lik.|BIC|F", output="gt",
+         stars = c('*' = .1, '**' = .05, '***' = .01))
+
+plot(se10)
+
+
+# Для наклона
+mod_check <- ardl(AAA_спред ~ slope_d2, 
+                  data = data_big10, order = c(2,0))
+summary(mod_check)
+
+mod_check2 <- ardl(AAA_спред ~ slope_d2 + d_kbd_short11, 
+                   data = data_big10, order = c(2,0, 0))
+summary(mod_check2)
+
+mod_check3 <- ardl(AAA_спред ~ slope_d2 + d_kbd_short11 + se10, 
+                   data = data_big10, order = c(2,0, 0, 0))
+summary(mod_check3)
+
+mod_check4 <- ardl(AAA_спред ~ slope_d2 + d_kbd_short11 + se10 + RVI, 
+                   data = data_big10, order = c(2,0, 0, 0, 0))
+summary(mod_check4)
+
+mod_list <- list(mod_check, mod_check2, mod_check3, mod_check4)
+
+
+msummary(mod_list, vcov="HC1", gof_omit = "AIC|RMSE|Log.Lik.|BIC|F", output="gt",
+         stars = c('*' = .1, '**' = .05, '***' = .01))
+
+plot(slope_d2, type = "l")
+
+
+
+# Для RVI
+mod_check <- ardl(AAA_спред ~ RVI, 
+                  data = data_big10, order = c(2,0))
+summary(mod_check)
+
+mod_check2 <- ardl(AAA_спред ~ RVI + d_kbd_short11, 
+                   data = data_big10, order = c(2,0, 0))
+summary(mod_check2)
+
+mod_check3 <- ardl(AAA_спред ~ RVI + d_kbd_short11 + slope_d2, 
+                   data = data_big10, order = c(2,0, 0, 0))
+summary(mod_check3)
+
+mod_check4 <- ardl(AAA_спред ~ RVI + d_kbd_short11 + slope_d2 + se10, 
+                   data = data_big10, order = c(2,0, 0, 0, 0))
+summary(mod_check4)
+
+mod_check5 <- ardl(AAA_спред ~ RVI + d_kbd_short11 + slope_d2 + se10, 
+                   data = data_big10, order = c(2,0, 0, 0, 0))
+summary(mod_check5)
+
+mod_list <- list(mod_check, mod_check2, mod_check3, mod_check4, mod_check5)
+
+
+msummary(mod_list, vcov="HC1", gof_omit = "AIC|RMSE|Log.Lik.|BIC|F", output="gt",
+         stars = c('*' = .1, '**' = .05, '***' = .01))
+# Все время не значимо - нормально
+
+
+# Проверка МосБиржи
+library(car)
+influenceIndexPlot(mod_check5)
+influenceIndexPlot(mod_check)
+
+View(data_big10)
+
+# Убираем наблюдения с очень большим расстоянием Кука
+View(data_big10)
+data_fix <- data_big10[-c(2078), ]
+View(data_fix7)
+
+data_fix2 <- data_fix[-c(237), ]
+data_fix3 <- data_fix2[-c(2043), ]
+data_fix4 <- data_fix3[-c(237), ]
+data_fix5 <- data_fix4[-c(2044), ]
+data_fix6 <- data_fix5[-c(2074), ]
+data_fix7 <- data_fix6[-c(2073), ]
+
+
+
+mod_check <- ardl(AAA_спред ~ se10, 
+                  data = data_big8, order = c(2,0))
+summary(mod_check)
+
+mod_check2 <- ardl(AAA_спред ~ se10 + d_kbd_short11, 
+                   data = data_big8, order = c(2,0, 0))
+summary(mod_check2)
+
+mod_check3 <- ardl(AAA_спред ~ se10 + d_kbd_short11 + slope_d2, 
+                   data = data_big8, order = c(2,0, 0, 0))
+summary(mod_check3)
+
+
+mod_check4 <- ardl(AAA_спред ~ se10 + d_kbd_short11 + slope_d2 + RVI, 
+                   data = data_big8, order = c(2,0, 0, 0, 0))
+summary(mod_check4)
+
+mod_list <- list(mod_check, mod_check2, mod_check3, mod_check4)
+
+
+msummary(mod_list, vcov="HC1", gof_omit = "AIC|RMSE|Log.Lik.|BIC|F", output="gt",
+         stars = c('*' = .1, '**' = .05, '***' = .01))
+
+View(data_big8)
+
+
+
+influenceIndexPlot(mod_check)
+influenceIndexPlot(mod_check2)
+influenceIndexPlot(mod_check3)
+influenceIndexPlot(mod_check4)
+influenceIndexPlot(mod_check5)
+
+
+
+#запишем в форме коррекции ошибок
+mod30 <- recm(mod10, case = 2)
+summary(mod30)
+
+mod31 <- recm(mod11, case = 2)
+summary(mod31)
+
+mod32 <- recm(mod12, case = 2)
+summary(mod32)
+
+
+# Что с остатками
+acf(resid(mod10))
+pacf(resid(mod10))
+plot(resid(mod10))
+
+acf(resid(mod11))
+pacf(resid(mod11))
+plot(resid(mod11))
+
+acf(resid(mod12))
+pacf(resid(mod12))
+plot(resid(mod12))
+
+# Достанем мультпликаторы
+a_small_aaa_full_lr <- multipliers(mod10, type = "lr")
+a_small_baa_full_lr <- multipliers(mod11, type = "lr")
+
+a_small_aaa_short_lr <- multipliers(mod_ardl_small_aaa, type = "lr")
+a_small_baa_short_lr <- multipliers(mod_ardl_small_baa, type = "lr")
+
+
+
+#### Строим MS ####
+
+# Создаем лагированные переменные
+RVI_1 <- data_what7$RVI[-1]
+ИПП_1 <- data_what7$ИПП[-1]
+Краткосрочная_ставка_р_1 <- data_what7$Краткосрочная_ставка_р[-1]
+Наклон_р_1 <- data_what7$Наклон_р[-1]
+ИПЦ_1 <- data_what7$ИПЦ[-1]
+Индекс_МосБиржи_д_1 <- data_what7$Индекс_МосБиржи_д[-1]
+
+x <- NA
+RVI_1 <- c(RVI_1, x)
+ИПП_1 <- c(ИПП_1, x)
+Краткосрочная_ставка_р_1 <- c(Краткосрочная_ставка_р_1, x)
+Наклон_р_1 <- c(Наклон_р_1, x)
+ИПЦ_1 <- c(ИПЦ_1, x)
+Индекс_МосБиржи_д_1 <- c(Индекс_МосБиржи_д_1, x)
+
+
+# Добавляем в датасет
+data_what8 <- data.frame(data_what7, RVI_1, ИПП_1, Краткосрочная_ставка_р_1,
+                         Наклон_р_1, ИПЦ_1, Индекс_МосБиржи_д_1)
+
+
+# Стриом обычную регрессию c лагами
+
+mod20 <- lm(`AAA_спред` ~ RVI_1 + ИПП_1 + Краткосрочная_ставка_р_1 +
+            Наклон_р_1 + ИПЦ_1 + Индекс_МосБиржи_д_1
+            , data = data_what8)
+summary(mod20)
+
+
+mod.mswm <- msmFit(mod20,k=2,p=1,
+                   sw=c(rep(TRUE, 9)), 
+                   )
+#k - количестиво режимов
+#p - число AR коэффициентов
+#sw - какие кожэффициенты переключаются
+mod.mswm
+summary(mod.mswm)
+
+#как ведут себя остатки?
+plotDiag(mod.mswm, which = 1)
+plotDiag(mod.mswm, which = 2)
+plotDiag(mod.mswm, which = 3)
+
+#диагностика
+#вероятность использования конкретного режима
+plotProb(mod.mswm,which=1)
+
+#выделение областей для режима
+plotProb(mod.mswm,which=2)
+
+#для двух графиков
+
+# Стриом регрессию c лагами
+mod20 <- lm(`AAA_спред` ~ RVI + ИПП + `Краткосрочная_ставка_р`+ 
+              Наклон_р + ИПЦ + `Индекс_МосБиржи_д`
+            , data = data_what7)
+summary(mod20)
+
+
+#### Часть TVAR ####
+
+# Формируем нужный датасет
+data_tvar_aa <- subset(data_what8, select = c(ИПП, Краткосрочная_ставка_р,
+                                              Наклон_р, ИПЦ, Индекс_МосБиржи_д,
+                                              RVI, AAA_спред))
+str(data_tvar_aa)
+
+
+mod_tvar_aa <- TVAR(data = data_tvar_aa, lag = 1, model = "MTAR",
+                    trace =TRUE, plot = TRUE, mTh = 6, trim = 0.2)
+summary(mod_tvar_aa)
+# Не в разностях
+mod_tvar_aa_nd <- TVAR(data = ex2_aa, lag = 1, model = "TAR",
+                       trace =TRUE, plot = TRUE, mTh = 1, trim = 0.2)
+summary(mod_tvar_aa_nd)
+
+
+# Смотрим на краткосрочную ставку
+data_what5$Краткосрочная.ставка %>% plot(type = "l")
+data_what5$Краткосрочная.ставка %>% adf.test()
+# Ну вот тут точно не стационарно
+
+
+# Смотрим на наклон
+data_what5$Наклон %>% plot(type = "l")
+data_what5$Наклон %>% adf.test()
+# Ну можно попробовать без разностей
+x <- na.omit(data_what5)
+data_what9 <- data.frame(data_what8, x$Наклон)
+
+# Смотрим на ИПЦ
+data_what7$ИПЦ %>% plot(type = "l")
+data_what5$ИПЦ %>% adf.test()
+# Ну попробуем считать как доходности
+
+data_what9$ИПЦ <- log((data_what8$ИПЦ + 100) / 100)
+
+
+# Снова делаем лагированные переменные
+Наклон_р_1 <- data_what9$x.Наклон[-1]
+ИПЦ_1 <- data_what9$ИПЦ[-1]
+
+x <- NA
+data_what9$Наклон_р_1 <- c(Наклон_р_1, x)
+data_what9$ИПЦ_1 <- c(ИПЦ_1, x)
+
+#### Продолжение MSwM ####
+
+# Делаем регрессию заново
+mod40 <- lm(`AAA_спред` ~ ИПП_1 + `Краткосрочная_ставка_р_1`+ 
+              Наклон_р_1 + ИПЦ_1 + `Индекс_МосБиржи_д_1` + RVI_1
+            , data = data_what9)
+summary(mod40)
+
+
+mod41 <- lm(`AAA_спред` ~ ИПП_1 + `Краткосрочная_ставка_р_1`+ 
+              Наклон_р_1 + ИПЦ_1 + `Индекс_МосБиржи_д_1`
+            , data = data_what9)
+summary(mod41)
+
+mod42 <- lm(`AAA_спред` ~  `Краткосрочная_ставка_р_1`+ 
+              Наклон_р_1 + `Индекс_МосБиржи_д_1`
+            , data = data_what9)
+summary(mod42)
+
+
+
+mod.mswm <- msmFit(mod40,k=2,p=1,
+                   sw=c(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,TRUE, TRUE, TRUE) 
+)
+
+
+mod.mswm2 <- msmFit(mod40,k=2,p=1,
+                   sw=c(TRUE, TRUE, TRUE, TRUE, FALSE, TRUE,TRUE, TRUE, TRUE) 
+)
+
+
+mod.mswm3 <- msmFit(mod41,k=2,p=1,
+                    sw=c(TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE) 
+)
+
+#k - количестиво режимов
+#p - число AR коэффициентов
+#sw - какие кожэффициенты переключаются
+mod.mswm3
+summary(mod.mswm3)
+plotProb(mod.mswm3,which=2)
+
+
+#как ведут себя остатки?
+plotDiag(mod.mswm, which = 1)
+plotDiag(mod.mswm, which = 2)
+plotDiag(mod.mswm, which = 3)
+
+
+#диагностика
+#вероятность использования конкретного режима
+plotProb(mod.mswm,which=1)
+
+#выделение областей для режима
+plotProb(mod.mswm,which=2)
+
+#### Продолжение TVAR ####
+library(tsDyn)
+# Формируем нужный датасет
+data_tvar_aa <- subset(data_what9, select = c(ИПП, Краткосрочная_ставка_р,
+                                              Наклон_р, ИПЦ, Индекс_МосБиржи_д,
+                                              RVI, AAA_спред))
+
+
+str(data_tvar_aa)
+mod_tvar_aa <- TVAR(data = data_tvar_aa, lag = 1, model = "MTAR",
+                    trace =TRUE, plot = TRUE, mTh = 6, trim = 0.2)
+summary(mod_tvar_aa)
+# Не в разностях
+mod_tvar_aa_nd <- TVAR(data = data_tvar_aa, lag = 1, model = "TAR",
+                       trace =TRUE, plot = TRUE, mTh = 6, trim = 0.3)
+summary(mod_tvar)
+
+
+#### Большие данные ####
+library(readxl)
+data_big <- read_xlsx("data big.xlsx")
+
+# Переделаем форматы
+data_big$moex <- as.numeric(data_big$moex)
+data_big$RVI <- as.numeric(data_big$RVI)
+data_big$AAA_spread <- as.numeric(data_big$AAA_spread)
+data_big$BAA_spread <- as.numeric(data_big$BAA_spread)
+data_big$B_spread <- as.numeric(data_big$B_spread)
+
+data_big2 <- na.omit(data_big)
+
+
+# Грузим КБД
+data_kbd <- read_xlsx("KBD.xlsx")
+str(data_kbd)
+
+# Объединяем данные
+data_big3 <- merge(data_big2, data_kbd, by = "Date")
+
+# Нужно обязательно сделать пропуск в Мае
+# Начиная с 2079 убираем
+# Еще выброс 11 июля 
+# 2118
+View(data_big8)
+x <- data_big3[1:2078,]
+y <- data_big3[2092:2117,]
+z <- data_big3[2119:2262,]
+data_big4 <- rbind(x, y, z)
+
+
+# Считаем наклон
+slope <- data_big4$Long - data_big4$Short
+
+# Выделим нужные столбцы
+data_big5 <- subset(data_big4, select =  c(Date, moex, RVI, AAA_spread,
+                                           BAA_spread, B_spread, Short, Long))
+# Добавим наклон
+data_big6 <- data.frame(data_big5, slope)
+
+# Переименуем
+names(data_big6) <- c("Даты", "Индекс_МосБиржи", "RVI",
+                        "AAA_спред", "BAA_спред", "B_спред", "Краткосрочная_ставка",
+                      "Долгосрочная_ставка", "Наклон")
+
+View(data_big6)
+#### Смотрим на стационарность ####
+# RVI
+data_big6$RVI %>% plot(type = "l")
+data_big6$RVI %>% adf.test()
+# Стационарно, но есть периоды высокой дисперсии
+# Нет, не стационарно
+
+# AAA
+data_big6$AAA_спред %>% plot(type = "l")
+data_big6$AAA_спред %>% adf.test()
+# То же самое
+
+# BAA 
+data_big6$BAA_спред %>% plot(type = "l")
+data_big6$BAA_спред %>% adf.test()
+# То же самое
+
+# B
+data_big6$B_спред %>% plot(type = "l")
+data_big6$B_спред %>% adf.test()
+# То же самое
+
+# SE
+data_big6$Индекс_МосБиржи %>% plot(type = "l")
+data_big6$Индекс_МосБиржи %>% adf.test()
+# Тут точно переход к разностям
+str(data_big6)
+# Считаем доходность МосиБиржи
+ts_se <- xts(x = data_big6$Индекс_МосБиржи, order.by = data_big6$Даты)
+se10 <- Return.calculate(ts_se, method = "log")
+
+
+# Добавляем в датасет
+data_big6 <- data.frame(data_big6, se10)
+
+# Смотрим на стационарность
+data_big6$se10 %>% plot(type = "l")
+data_big6$se10 %>% adf.test()
+# Вот теперь хорошо
+
+
+# kbd_short
+data_big6$Краткосрочная_ставка %>% plot(type = "l")
+data_big6$Краткосрочная_ставка %>% adf.test()
+# Не стационарно
+
+# Перейдем к разностям и посмотрим
+d_kbd_short10 <- diff(data_big6$Краткосрочная_ставка, 1)
+d_kbd_short10 %>% plot(type = "l")
+d_kbd_short10 %>% adf.test()
+# Теперь стационарно
+
+
+# kbd_long
+data_big6$Долгосрочная_ставка  %>% plot(type = "l")
+data_big6$Долгосрочная_ставка %>% adf.test()
+# Не стационарно, аналогично
+
+d_kbd_long10 <- diff(data_big6$Долгосрочная_ставка, 1)
+d_kbd_long10 %>% plot(type = "l")
+d_kbd_long10 %>% adf.test()
+
+
+# Slope
+data_big6$Наклон  %>% plot(type = "l")
+data_big6$Наклон %>% adf.test()
+
+
+#Посчитаем все же наклон
+slope_d <- diff(data_big6$Наклон, 1)
+
+rvi_d <- diff(data_big6$RVI, 1)
+
+
+
+# Добавляем
+x <- NA
+d_kbd_short11 <- c(x, d_kbd_short10)
+d_kbd_long11 <- c(x, d_kbd_long10)
+slope_d2 <- c(x, slope_d)
+rvi_d <- c(x, rvi_d)
+data_big7 <- data.frame(data_big6, d_kbd_short11, d_kbd_long11, slope_d2, rvi_d)
+data_big7 <- na.omit(data_big7)
+data_big8 <- subset(data_big7, select = c(Даты, AAA_спред, BAA_спред, 
+                                          d_kbd_short11,
+                                           slope_d2, se10, rvi_d, RVI
+                                           ))
+View(data_big8)
+#### Строим ARDL на удаленных данных ####
+
+mod_check <- ardl(AAA_спред ~ se10, 
+                  data = data_big9, order = c(2,2))
+summary(mod_check)
+
+mod_check2 <- ardl(AAA_спред ~ se10 + d_kbd_short11, 
+                   data = data_big9, order = c(2,2, 0))
+summary(mod_check2)
+
+mod_check3 <- ardl(AAA_спред ~ se10 + d_kbd_short11 + slope_d2, 
+                   data = data_big9, order = c(2,2, 0, 0))
+summary(mod_check3)
+
+
+mod_check4 <- ardl(AAA_спред ~ se10 + d_kbd_short11 + slope_d2 + RVI, 
+                   data = data_big9, order = c(2,2, 0, 0, 0))
+summary(mod_check4)
+
+mod_list <- list(mod_check, mod_check2, mod_check3, mod_check4)
+
+
+msummary(mod_list, vcov="HC1", gof_omit = "AIC|RMSE|Log.Lik.|BIC|F", output="gt",
+         stars = c('*' = .1, '**' = .05, '***' = .01))
+
+
+influenceIndexPlot(mod_check)
+influenceIndexPlot(mod_check2)
+influenceIndexPlot(mod_check3)
+influenceIndexPlot(mod_check4)
+
+data_big9 <- data_big8
+data_big9$se10 <- data_big9$se10*100
+data_big10 <- data_big9
+
+
+mod_lm <- lm(AAA_спред ~ se10 + d_kbd_short11 + slope_d2 + RVI, 
+             data = data_big8)
+summary(mod_lm)
+crPlots(mod_lm)
+
+
+summary(data_big8)
+
+
+
+ggplot(data_big8,  aes(RVI, AAA_спред)) + geom_point(aes(colour=Даты))
+ggplot(data_big8,  aes(se10, AAA_спред)) + geom_point(aes(colour=Даты))
+ggplot(data_big8,  aes(d_kbd_short11, AAA_спред)) + geom_point(aes(colour=Даты))
+ggplot(data_big8,  aes(slope_d2, AAA_спред)) + geom_point(aes(colour=Даты))
+
+
+
+# Создадим лаги для lm
+x <- NA
+d_kbd_short_1l <- data_big8$d_kbd_short11[-1] 
+slope_d2_1l <- data_big8$slope_d2[-1] 
+se10_1l <- data_big8$se10[-1] 
+RVI_1l <- data_big8$RVI[-1] 
+
+d_kbd_short_1l <- c(d_kbd_short_1l, x)
+slope_d2_1l <- c(slope_d2_1l, x)
+se10_1l <- c(se10_1l, x)
+RVI_1l <- c(RVI_1l, x)
+
+
+data_big9 <- data_big8
+data_big9 <- data.frame(data_big9, d_kbd_short_1l, slope_d2_1l, se10_1l, RVI_1l)
+
+# Построим lm
+mod_lm_lags <- lm(AAA_спред ~ d_kbd_short_1l + slope_d2_1l + se10_1l + RVI_1l, 
+                  data = data_big9)
+
+summary(mod_lm_lags)
+# Ну как-то совсем плохо
+
+# Смотрим на корреляцию
+corrplot(cor(na.omit(data_big9[,-1 ])), addCoef.col = TRUE)
+
+#### Строим модели на почищенных данных ####
+data_big_l <- data.frame(data_big8, RVI_1l, d_kbd_short_1l, slope_d2_1l, se10_1l)
+names(data_big_l)
+# Убираем пропуски
+x <- data_big_l[1:236, ]
+y <- data_big_l[239:1001, ]
+data_big_until_2018_omit <- rbind(x,y)
+View(data_big_from_2018_omit)
+
+x <- data_big_l[1002:2044, ]
+y <- data_big_l[2047:2247, ]
+data_big_from_2018_omit <- rbind(x,y)
+names(data_big_from_2018_omit)
+View(data_big_l)
+
+names(data_big_from_2018_omit)
+
+
+
+# Убираем пропуски
+data_big_until_2018 <- data_big8[1:1001, ]
+data_big_from_2018 <- data_big8[1002: 2247 , ]
+View(data_big_until_2018)
+
+
+
+# Посмотрим на стационарность спредов
+# До 2018
+# AAA
+data_big_until_2018_omit$AAA_спред %>% plot(type = "l")
+data_big_until_2018_omit$AAA_спред %>% adf.test()
+# Если не считать выбрсоа в конце 2014, то это нестационарно
+
+# Переходим к 1 разностям
+AAA_spread_d <- diff(data_big_until_2018_omit$AAA_спред, 1)
+AAA_spread_d %>% plot(type = "l")
+AAA_spread_d %>% adf.test()
+# Теперь стационарно
+
+
+# BAA 
+data_big_until_2018_omit$BAA_спред %>% plot(type = "l")
+data_big_until_2018_omit$BAA_спред %>% adf.test()
+# То же самое
+
+# Переходим к 1 разностям
+BAA_spread_d <- diff(data_big_until_2018_omit$BAA_спред, 1)
+BAA_spread_d %>% plot(type = "l")
+BAA_spread_d %>% adf.test()
+# Теперь стационарно
+
+
+# Добавляем
+x <- NA
+AAA_spread_d <- c(x, AAA_spread_d)
+BAA_spread_d <- c(x, BAA_spread_d)
+data_big7 <- data.frame(data_big_until_2018_omit, AAA_spread_d, BAA_spread_d)
+data_big7_until_2018 <- na.omit(data_big7)
+View(data_big7_until_2018)
+plot(data_big7_until_2018$AAA_spread_d, type = "l")
+
+# После 2018
+# AAA
+data_big_from_2018_omit$AAA_спред %>% plot(type = "l")
+data_big_from_2018_omit$AAA_спред %>% adf.test()
+# То же самое
+
+# Переходим к 1 разностям
+AAA_spread_d <- diff(data_big_from_2018_omit$AAA_спред, 1)
+AAA_spread_d %>% plot(type = "l")
+AAA_spread_d %>% adf.test()
+# Теперь стационарно
+
+
+# BAA 
+data_big6$BAA_спред %>% plot(type = "l")
+data_big6$BAA_спред %>% adf.test()
+# То же самое
+
+# Переходим к 1 разностям
+BAA_spread_d <- diff(data_big_from_2018_omit$BAA_спред, 1)
+BAA_spread_d %>% plot(type = "l")
+BAA_spread_d %>% adf.test()
+# Теперь стационарно
+
+
+# Добавляем
+x <- NA
+AAA_spread_d <- c(x, AAA_spread_d)
+BAA_spread_d <- c(x, BAA_spread_d)
+data_big7 <- data.frame(data_big_from_2018_omit, AAA_spread_d, BAA_spread_d)
+data_big7_from_2018 <- na.omit(data_big7)
+View(data_big7_from_2018)
+
+
+
+
+#### Посмотрим на простой lm до 2018 и после ####
+
+# Убираем очень влиятельные наблбдения после 2018 года
+View(data_big7_from_2018)
+# Мешают 2048 и 2092 наблюдения
+data_big7_from_2018 <- data_big7_from_2018[-1043, ]
+data_big7_from_2018 <- data_big7_from_2018[-1073, ]
+
+
+# Для AAA
+mod_lm_until_2018_aaa <- lm(AAA_spread_d ~ rvi_d + d_kbd_short11 + slope_d2 + se10, 
+                  data = data_big7_until_2018)
+summary(mod_lm_until_2018_aaa)
+a7 <- summary(mod_lm_until_2018_aaa)
+crPlots(mod_lm_until_2018_aaa)
+corrplot(cor(na.omit(data_big7_from_2018[,-1 ])), addCoef.col = TRUE)
+influenceIndexPlot(mod_lm_until_2018_aaa)
+
+# С нефтью
+mod_lm_until_2018_aaa_brent <- lm(AAA_spread_d ~ rvi_d + d_kbd_short11 + slope_d2 + se10 + brent_d, 
+                            data = data_all2_with_brent_until_2018)
+summary(mod_lm_until_2018_aaa_brent)
+a7 <- summary(mod_lm_until_2018_aaa_brent)
+crPlots(mod_lm_until_2018_aaa_brent)
+AIC(mod_lm_until_2018_aaa_brent)
+
+
+# После 2018
+mod_lm_from_2018_aaa <- lm(AAA_spread_d ~ rvi_d + d_kbd_short11 + slope_d2 + se10 , 
+                        data = data_big7_from_2018)
+a9 <- summary(mod_lm_from_2018_aaa)
+crPlots(mod_lm_from_2018_aaa)
+a9
+
+corrplot(cor(na.omit(data_big_from_2018[,-1 ])), addCoef.col = TRUE)
+influenceIndexPlot(mod_lm_from_2018_aaa)
+
+
+# С нефтью
+mod_lm_from_2018_aaa_brent <- lm(AAA_spread_d ~ rvi_d + d_kbd_short11 + slope_d2 + se10 +brent_d , 
+                           data = data_all2_with_brent_from_2018)
+a9 <- summary(mod_lm_from_2018_aaa_brent)
+crPlots(mod_lm_from_2018_aaa_brent)
+a9
+AIC(mod_lm_from_2018_aaa_brent)
+
+
+# Для BAA
+# До 2018 года
+mod_lm_until_2018_baa <- lm(BAA_spread_d ~ rvi_d + d_kbd_short11 + slope_d2 + se10, 
+                        data = data_big7_until_2018)
+summary(mod_lm_until_2018_baa)
+a8 <- summary(mod_lm_until_2018_baa)
+crPlots(mod_lm_until_2018_baa)
+corrplot(cor(na.omit(data_big7_from_2018[,-1 ])), addCoef.col = TRUE)
+influenceIndexPlot(mod_lm_until_2018_baa)
+
+
+# C нефтью
+mod_lm_until_2018_baa_brent <- lm(BAA_spread_d ~ rvi_d + d_kbd_short11 + slope_d2 + se10 + brent_d, 
+                            data = data_all2_with_brent_until_2018)
+summary(mod_lm_until_2018_baa_brent)
+a8 <- summary(mod_lm_until_2018_baa_brent)
+AIC(mod_lm_until_2018_baa_brent)
+
+
+# После 2018
+mod_lm_from_2018_baa <- lm(BAA_spread_d ~ rvi_d + d_kbd_short11 + slope_d2 + se10, 
+                       data = data_big7_from_2018)
+a10 <- summary(mod_lm_from_2018_baa)
+crPlots(mod_lm_from_2018_baa)
+a10
+# Из-за пропуска в данных очень сильно смещается оценка - что делать?
+corrplot(cor(na.omit(data_big_from_2018[,-1 ])), addCoef.col = TRUE)
+influenceIndexPlot(mod_lm_from_2018)
+
+
+# С нефтью
+mod_lm_from_2018_baa_brent <- lm(BAA_spread_d ~ rvi_d + d_kbd_short11 + slope_d2 + se10 +brent_d, 
+                           data = data_all2_with_brent_from_2018)
+a10 <- summary(mod_lm_from_2018_baa_brent)
+crPlots(mod_lm_from_2018_baa_brent)
+a10
+AIC(mod_lm_from_2018_baa_brent)
+
+
+
+length(data_big7_until_2018$AAA_спред)
+length(data_big7_from_2018$AAA_спред)
+data_big_all <- rbind(data_big7_until_2018, data_big7_from_2018)
+
+
+
+k <- rep(0, 998)
+a <- rep(1, 1240)
+k <- c(k,a)
+
+
+data_all2 <- data.frame(data_big_all, k)
+View(data_all2)
+names(data_all2)
+
+
+# Сделаем регрессию по всем данным
+mod_all_AAA <- lm(AAA_spread_d ~ rvi_d + se10 + d_kbd_short11 + slope_d2 +
+                k*se10 + k*rvi_d + k*d_kbd_short11 + k*slope_d2, data = data_all2)
+summary(mod_all_AAA)
+
+mod_all_BAA <- lm(BAA_spread_d ~ RVI + se10 + d_kbd_short11 + slope_d2 +
+                k*se10 + k*RVI + k*d_kbd_short11 + k*slope_d2, data = data_all2)
+summary(mod_all_BAA)
+
+
+# Без бинарных переменных
+mod_all_AAA2 <- lm(AAA_spread_d ~ rvi_d + d_kbd_short11 + slope_d2 + se10, data = data_all2_with_brent)
+summary(mod_all_AAA2)
+a3 <- summary(mod_all_AAA2)
+AIC(mod_all_AAA2)
+
+
+
+mod_all_BAA2 <- lm(BAA_spread_d ~ rvi_d + d_kbd_short11 + slope_d2 + se10, data = data_all2)
+summary(mod_all_BAA2)
+a4 <- summary(mod_all_BAA2)
+AIC(mod_all_BAA2)
+
+
+# А если с нефтью?
+# AAA
+mod_all_AAA2_brent <- lm(AAA_spread_d ~ rvi_d + d_kbd_short11 + slope_d2 + se10 + brent_d, data = data_all2_with_brent)
+summary(mod_all_AAA2_brent)
+a3 <- summary(mod_all_AAA2_brent)
+AIC(mod_all_AAA2_brent)
+
+plot(data_all2_with_brent$brent_d, type = "l")
+
+# BAA
+mod_all_BAA2_brent <- lm(BAA_spread_d ~ rvi_d + d_kbd_short11 + slope_d2 + se10 + brent_d, data = data_all2_with_brent)
+summary(mod_all_BAA2_brent)
+a4 <- summary(mod_all_BAA2_brent)
+AIC(mod_all_BAA2_brent)
+
+length(data_big7_from_2018$AAA_spread_d)
+data_all2_with_brent_until_2018 <- data_all2_with_brent[1:998, ]
+data_all2_with_brent_from_2018 <- data_all2_with_brent[999: 2238, ]
+
+
+
+# Сделаем проверку гипотез для AAA
+linearHypothesis(mod_all_AAA, "RVI + RVI:k = 0")
+# 0 во 2 периоде
+
+linearHypothesis(mod_all_AAA, "d_kbd_short11 + d_kbd_short11:k = 0")
+# не 0 во 2 периоде
+
+linearHypothesis(mod_all_AAA, "slope_d2 + slope_d2:k = 0")
+# не 0 во 2 периоде
+
+linearHypothesis(mod_all_AAA, "se10 + se10:k = 0")
+# не 0 во 2 периоде
+
+
+# Сделаем проверку гипотез для BAA
+linearHypothesis(mod_all_BAA, "RVI + RVI:k = 0")
+# 0 во 2 периоде
+
+linearHypothesis(mod_all_BAA, "d_kbd_short11 + d_kbd_short11:k = 0")
+# 0 во 2 периоде при 5% уровне значимости
+
+linearHypothesis(mod_all_BAA, "slope_d2 + slope_d2:k = 0")
+# 0 во 2 периоде при 5% уровне значимости
+
+linearHypothesis(mod_all_BAA, "se10 + se10:k = 0")
+# не 0 во 2 периоде
+
+
+fs <- Fstats(data_all2$AAA_спред ~ 1, from = 0.05, to = 0.95)
+## plot the F statistics
+plot(fs, alpha = 0.01)
+## and the corresponding p values
+plot(fs, pval = TRUE, alpha = 0.01)
+## perform the aveF test
+sctest(fs, type = "supF")
+
+length(data_big7_until_2018$AAA_спред) / length(data_all2$AAA_спред)
+
+#### Добавим нефть ####
+
+write_xlsx(data_all2, "data_all2_without_brent.xlsx")
+data_all2_with_brent <- read_excel("data_all2_with_brent.xlsx")
+data_all2_with_brent$brent <- as.numeric(data_all2_with_brent$brent)
+data_all2_with_brent$brent_d <- as.numeric(data_all2_with_brent$brent_d)
+
+
+# Посчитаем как доходность
+ts_brent <- xts(x = data_all2_with_brent$brent, data_all2_with_brent$Даты)
+
+brent_return <- Return.calculate(ts_brent, method = "log")
+
+# Вернем как brent_d
+data_all2_with_brent$brent_d <- brent_return
+data_all2_with_brent$brent_d <- as.numeric(data_all2_with_brent$brent_d)
+
+
+
+#### Строим графики ####
+# На всех данных
+ggplot(data_all2,  aes(Даты, AAA_спред)) + geom_line()
+ggplot(data_all2,  aes(Даты, AAA_spread_d)) + geom_line()
+ggplot(data_all2,  aes(Даты, BAA_спред)) + geom_line()
+ggplot(data_all2,  aes(Даты, BAA_spread_d)) + geom_line()
+ggplot(data_all2,  aes(Даты, d_kbd_short11)) + geom_line()
+ggplot(data_all2,  aes(Даты, slope_d2)) + geom_line()
+ggplot(data_all2,  aes(Даты, se10)) + geom_line()
+ggplot(data_all2,  aes(Даты, RVI)) + geom_line()
+ggplot(data_big6,  aes(Даты, data_big6$Краткосрочная_ставка)) + geom_line()
+ggplot(data_big6,  aes(Даты, data_big6$Наклон)) + geom_line()
+ggplot(data_all2,  aes(Даты, rvi_d)) + geom_line()
+ggplot(data_big6,  aes(Даты, data_big6$Индекс_МосБиржи)) + geom_line()
+ggplot(data_all2_with_brent,  aes(Даты, brent)) + geom_line() + ylab("Oil") + geom_vline(xintercept = data_all2_with_brent$Даты[999], 
+                                                                                         linewidth = 1, colour = "red")
+ggplot(data_all2_with_brent,  aes(Даты, brent_d)) + geom_line()
+
+data_all2_with_brent$Даты[1000]
+View(data_all2_with_brent)
+?geom_vline
+ggplot(data_all2,  aes(Даты, AAA_спред)) + geom_line() + geom_vline(xintercept = "2018-01-01",  linetype = "solid", colour = "red", linewidth = 2)
+
+
+# Поделим data_big6
+data_big6_until_2018 <- data_big6[1:1002, ]
+data_big6_from_2018 <- data_big6[1003:2248, ]
+
+
+# На подвыборке до 2018 года
+ggplot(data_big7_until_2018,  aes(Даты, AAA_спред)) + geom_line()
+ggplot(data_big7_until_2018,  aes(Даты, AAA_spread_d)) + geom_line()
+ggplot(data_big7_until_2018,  aes(Даты, BAA_спред)) + geom_line()
+ggplot(data_big7_until_2018,  aes(Даты, BAA_spread_d)) + geom_line()
+ggplot(data_big7_until_2018,  aes(Даты, d_kbd_short11)) + geom_line()
+ggplot(data_big7_until_2018,  aes(Даты, slope_d2)) + geom_line()
+ggplot(data_big7_until_2018,  aes(Даты, se10)) + geom_line()
+ggplot(data_big7_until_2018,  aes(Даты, RVI)) + geom_line()
+ggplot(data_big6_until_2018,  aes(Даты, `Краткосрочная_ставка`)) + geom_line()
+ggplot(data_big6_until_2018,  aes(Даты, `Наклон`)) + geom_line()
+ggplot(data_big7_until_2018,  aes(Даты, rvi_d)) + geom_line()
+
+
+# На подвыборке после 2018 года
+ggplot(data_big7_from_2018,  aes(Даты, AAA_спред)) + geom_line()
+ggplot(data_big7_from_2018,  aes(Даты, AAA_spread_d)) + geom_line()
+ggplot(data_big7_from_2018,  aes(Даты, BAA_спред)) + geom_line()
+ggplot(data_big7_from_2018,  aes(Даты, BAA_spread_d)) + geom_line()
+ggplot(data_big7_from_2018,  aes(Даты, d_kbd_short11)) + geom_line()
+ggplot(data_big7_from_2018,  aes(Даты, slope_d2)) + geom_line()
+ggplot(data_big7_from_2018,  aes(Даты, se10)) + geom_line()
+ggplot(data_big7_from_2018,  aes(Даты, RVI)) + geom_line()
+ggplot(data_big6_from_2018,  aes(Даты, `Краткосрочная_ставка`)) + geom_line()
+ggplot(data_big6_from_2018,  aes(Даты, `Наклон`)) + geom_line()
+ggplot(data_big7_from_2018,  aes(Даты, rvi_d)) + geom_line()
+
+#### Смотрим на тест Дики Фулера переменных ####
+# На всех данных
+adf.test(data_all2$AAA_спред)
+adf.test(data_all2$AAA_spread_d)
+adf.test(data_all2$BAA_спред)
+adf.test(data_all2$BAA_spread_d)
+adf.test(data_all2$d_kbd_short11)
+adf.test(data_all2$slope_d2)
+adf.test(data_all2$se10)
+adf.test(data_all2$RVI)
+adf.test(data_big6$Краткосрочная_ставка)
+adf.test(data_big6$Наклон)
+adf.test(data_all2_with_brent$brent)
+adf.test(data_all2_with_brent$brent_d)
+
+
+# На данных до 2018 года
+adf.test(data_big7_until_2018$AAA_спред)
+adf.test(data_big7_until_2018$AAA_spread_d)
+adf.test(data_big7_until_2018$BAA_спред)
+adf.test(data_big7_until_2018$BAA_spread_d)
+adf.test(data_big7_until_2018$d_kbd_short11)
+adf.test(data_big7_until_2018$slope_d2)
+adf.test(data_big7_until_2018$se10)
+adf.test(data_big7_until_2018$RVI)
+adf.test(data_big7_until_2018$rvi_d)
+adf.test(data_big6_until_2018$Краткосрочная_ставка)
+adf.test(data_big6_until_2018$Наклон)
+
+
+# На данных после 2018 года
+adf.test(data_big7_from_2018$AAA_спред)
+adf.test(data_big7_from_2018$AAA_spread_d)
+adf.test(data_big7_from_2018$BAA_спред)
+adf.test(data_big7_from_2018$BAA_spread_d)
+adf.test(data_big7_from_2018$d_kbd_short11)
+adf.test(data_big7_from_2018$slope_d2)
+adf.test(data_big7_from_2018$se10)
+adf.test(data_big7_from_2018$RVI)
+adf.test(data_big7_from_2018$rvi_d)
+adf.test(data_big6_until_2018$Краткосрочная_ставка)
+adf.test(data_big6_until_2018$Наклон)
+
+
+#### ARDL на всех данных ####
+mod_auto_AAA_rvi_d_all <- auto_ardl(AAA_spread_d ~ rvi_d + d_kbd_short11 + 
+                                           slope_d2 + se10, 
+                                         data = data_all2, max_order = 3, selection = "BIC")
+mod_auto_AAA_rvi_d_all
+
+# Выбор порядка для BAA
+mod_auto_BAA_rvi_d_all <- auto_ardl(BAA_spread_d ~ rvi_d + d_kbd_short11 + 
+                                           slope_d2 + se10, 
+                                         data = data_all2, max_order = 3, selection = "BIC")
+mod_auto_BAA_rvi_d_all
+
+
+# Построение модели AAA
+mod_ardl_aaa_rvi_d_all <- ardl(AAA_spread_d ~ rvi_d + d_kbd_short11 + 
+                                      slope_d2 + se10, 
+                                    data = data_all2, order = mod_auto_AAA_rvi_d_all$best_order)
+summary(mod_ardl_aaa_rvi_d_all)
+
+# Достанем мультипликаторы
+a <- multipliers(mod_ardl_aaa_rvi_d_all, type = "lr")
+a <- multipliers(mod_ardl_aaa_rvi_d_all, type = "sr")
+a
+
+
+# Построение с нефтью
+# Построение модели AAA
+mod_ardl_aaa_rvi_d_all_brent <- ardl(AAA_spread_d ~ rvi_d + d_kbd_short11 + 
+                                 slope_d2 + se10 + brent_d, 
+                               data = data_all2_with_brent, order = c(1,1,1,1,1,1))
+summary(mod_ardl_aaa_rvi_d_all_brent)
+
+# Достанем мультипликаторы
+a <- multipliers(mod_ardl_aaa_rvi_d_all_brent, type = "lr")
+a <- multipliers(mod_ardl_aaa_rvi_d_all_brent, type = "sr")
+a
+AIC(mod_ardl_aaa_rvi_d_all_brent)
+
+
+# Построение модели BAA
+mod_ardl_baa_rvi_d_all <- ardl(BAA_spread_d ~  rvi_d + d_kbd_short11 + 
+                                      slope_d2 + se10, 
+                                    data = data_all2, order = mod_auto_BAA_rvi_d_all$best_order)
+summary(mod_ardl_baa_rvi_d_all)
+
+# Достанем мультипликаторы
+a2 <- multipliers(mod_ardl_baa_rvi_d_all, type = "lr")
+a2 <- multipliers(mod_ardl_baa_rvi_d_all, type = "sr")
+a2
+AIC(mod_ardl_baa_rvi_d_all)
+
+
+# Если с нефтью?
+mod_ardl_baa_rvi_d_all_brent <- ardl(BAA_spread_d ~  rvi_d + d_kbd_short11 + 
+                                 slope_d2 + se10 + brent_d, 
+                               data = data_all2_with_brent, order = c(1,1,1,1,1,1))
+summary(mod_ardl_baa_rvi_d_all_brent)
+
+# Достанем мультипликаторы
+a2 <- multipliers(mod_ardl_baa_rvi_d_all_brent, type = "lr")
+a2 <- multipliers(mod_ardl_baa_rvi_d_all_brent, type = "sr")
+a2
+
+
+#### Делаем лист с показателями моделей ####
+
+# Lm и ARDL
+l_lm_ardl_all <- list(mod_all_AAA2_brent, mod_all_BAA2_brent, mod_ardl_aaa_rvi_d_all_brent, mod_ardl_baa_rvi_d_all_brent)
+l_lm_ardl_until_2018 <- list(mod_lm_until_2018_aaa_brent, mod_lm_until_2018_baa_brent, 
+                             mod_ardl_aaa_rvi_d_intil_2018_brent, mod_ardl_baa_rvi_d_intil_2018_brent)
+l_lm_ardl_from_2018 <- list(mod_lm_from_2018_aaa_brent, mod_lm_from_2018_baa_brent,
+                            mod_ardl_aaa_rvi_d_from_2018_brent, mod_ardl_baa_rvi_d_from_2018_brent)
+
+# MS везде
+summary(mod_MS_all_AAA)
+summary(mod_MS_all_BAA)
+
+
+# AAA
+sum(unstab_reg_aaa_all_brent)
+length(unstab_reg_aaa_all_brent) - sum(unstab_reg_aaa_all_brent)
+
+# BAA
+sum(unstab_reg_baa_all_brent)
+length(unstab_reg_baa_all_brent) - sum(unstab_reg_baa_all_brent)
+
+
+# MS до 2018
+summary(mod_MS_until_2018_AAA_brent)
+summary(mod_MS_until_2018_BAA_brent)
+
+
+# AAA
+sum(unstab_reg_aaa_until_2018_brent)
+length(unstab_reg_aaa_until_2018_brent) - sum(unstab_reg_aaa_until_2018_brent)
+
+# BAA
+sum(unstab_reg_baa_until_2018_brent)
+length(unstab_reg_baa_until_2018_brent) - sum(unstab_reg_baa_until_2018_brent)
+
+
+# MS после 2018
+summary(mod_MS_from_2018_AAA_brent)
+summary(mod_MS_from_2018_BAA_brent)
+
+
+# AAA
+sum(unstab_reg_aaa_from_2018_brent)
+length(unstab_reg_aaa_from_2018_brent) - sum(unstab_reg_aaa_from_2018_brent)
+
+# BAA
+sum(unstab_reg_baa_from_2018_brent)
+length(unstab_reg_baa_from_2018_brent) - sum(unstab_reg_baa_from_2018_brent)
+
+
+#TVAR по всей выборке
+
+# AAA
+# Стабильный
+round(mod_tvar_AAA_all2_brent$T * mod_tvar_AAA_all2_brent$nobs_regimes[1], digits = 0)
+# Нетабильный
+round(mod_tvar_AAA_all2_brent$T * mod_tvar_AAA_all2_brent$nobs_regimes[2], digits = 0)
+
+# BAA
+# Стабильный
+round(mod_tvar_BAA_all2_brent$T * mod_tvar_BAA_all2_brent$nobs_regimes[1], digits = 0)
+# Нетабильный
+round(mod_tvar_BAA_all2_brent$T * mod_tvar_BAA_all2_brent$nobs_regimes[2], digits = 0)
+
+
+#TVAR по выборке до 2018 года
+
+# AAA
+# Стабильный
+round(mod_tvar_AAA_until_2018_2_brent$T * mod_tvar_AAA_until_2018_2_brent$nobs_regimes[1], digits = 0)
+# Нетабильный
+round(mod_tvar_AAA_until_2018_2_brent$T * mod_tvar_AAA_until_2018_2_brent$nobs_regimes[2], digits = 0)
+
+# BAA
+# Стабильный
+round(mod_tvar_BAA_until_2018_2_brent$T * mod_tvar_BAA_until_2018_2_brent$nobs_regimes[1], digits = 0)
+# Нетабильный
+round(mod_tvar_BAA_until_2018_2_brent$T * mod_tvar_BAA_until_2018_2_brent$nobs_regimes[2], digits = 0)
+
+
+#TVAR по выборке после 2018 года
+
+# AAA
+# Стабильный
+round(mod_tvar_AAA_from_2018_brent$T * mod_tvar_AAA_from_2018_brent$nobs_regimes[1], digits = 0)
+# Нетабильный
+round(mod_tvar_AAA_from_2018_brent$T * mod_tvar_AAA_from_2018_brent$nobs_regimes[2], digits = 0)
+
+# BAA
+# Стабильный
+round(mod_tvar_BAA_from_2018_brent$T * mod_tvar_BAA_from_2018_brent$nobs_regimes[1], digits = 0)
+# Нетабильный
+round(mod_tvar_BAA_from_2018_brent$T * mod_tvar_BAA_from_2018_brent$nobs_regimes[2], digits = 0)
+
+
+
+#### ARDL на разделенных данных.До 2018 ####
+# Выбор порядка для AAA
+mod_auto_AAA_rvi_d_intil_2018 <- auto_ardl(AAA_spread_d ~ rvi_d + d_kbd_short11 + 
+                                slope_d2 + se10, 
+                              data = data_big7_until_2018, max_order = 3, selection = "BIC")
+mod_auto_AAA_rvi_d_intil_2018
+
+# Выбор порядка для BAA
+mod_auto_BAA_rvi_d_intil_2018 <- auto_ardl(BAA_spread_d ~ rvi_d + d_kbd_short11 + 
+                                slope_d2 + se10, 
+                              data = data_big7_until_2018, max_order = 3, selection = "BIC")
+mod_auto_BAA_rvi_d_intil_2018
+
+
+# Построение модели AAA
+mod_ardl_aaa_rvi_d_intil_2018 <- ardl(AAA_spread_d ~ rvi_d + d_kbd_short11 + 
+                                      slope_d2 + se10, 
+                         data = data_big7_until_2018, order = mod_auto_AAA_rvi_d_intil_2018$best_order)
+summary(mod_ardl_aaa_rvi_d_intil_2018)
+
+# Достанем мультипликаторы
+a5 <- multipliers(mod_ardl_aaa_rvi_d_intil_2018, type = "lr")
+a5 <- multipliers(mod_ardl_aaa_rvi_d_intil_2018, type = "sr")
+a5
+
+
+
+# Построение с нефтью
+mod_ardl_aaa_rvi_d_intil_2018_brent <- ardl(AAA_spread_d ~ rvi_d + d_kbd_short11 + 
+                                        slope_d2 + se10 + brent_d, 
+                                      data = data_all2_with_brent_until_2018, order = c(1,1,1,1,1,1))
+summary(mod_ardl_aaa_rvi_d_intil_2018_brent)
+
+# Достанем мультипликаторы
+a5 <- multipliers(mod_ardl_aaa_rvi_d_intil_2018_brent, type = "lr")
+a5 <- multipliers(mod_ardl_aaa_rvi_d_intil_2018_brent, type = "sr")
+a5
+AIC(mod_ardl_aaa_rvi_d_intil_2018_brent)
+
+
+
+# Построение модели BAA
+mod_ardl_baa_rvi_d_intil_2018 <- ardl(BAA_spread_d ~  rvi_d + d_kbd_short11 + 
+                           slope_d2 + se10, 
+                         data = data_big7_until_2018, order = mod_auto_BAA_rvi_d_intil_2018$best_order)
+summary(mod_ardl_baa_rvi_d_intil_2018)
+
+# Достанем мультипликаторы
+a6 <- multipliers(mod_ardl_baa_rvi_d_intil_2018, type = "lr")
+a6 <- multipliers(mod_ardl_baa_rvi_d_intil_2018, type = "sr")
+a6
+
+
+
+# Построение с нефтью
+mod_ardl_baa_rvi_d_intil_2018_brent <- ardl(BAA_spread_d ~  rvi_d + d_kbd_short11 + 
+                                        slope_d2 + se10 + brent_d, 
+                                      data = data_all2_with_brent_until_2018, order = c(1,1,1,1,1,1))
+summary(mod_ardl_baa_rvi_d_intil_2018_brent)
+
+# Достанем мультипликаторы
+a6 <- multipliers(mod_ardl_baa_rvi_d_intil_2018_brent, type = "lr")
+a6 <- multipliers(mod_ardl_baa_rvi_d_intil_2018_brent, type = "sr")
+a6
+AIC(mod_ardl_baa_rvi_d_intil_2018_brent)
+
+
+#### ARDL на разделенных данных.После 2018 ####
+
+# Выбор порядка для AAA
+mod_auto_AAA_rvi_d_from_2018 <- auto_ardl(AAA_spread_d ~ rvi_d + d_kbd_short11 + 
+                                slope_d2 + se10, 
+                              data = data_big7_from_2018, max_order = 3, selection = "BIC")
+mod_auto_AAA_rvi_d_from_2018
+
+# Выбор порядка для BAA
+mod_auto_BAA_rvi_d_from_2018 <- auto_ardl(BAA_spread_d ~ rvi_d + d_kbd_short11 + 
+                                           slope_d2 + se10, 
+                                         data = data_big7_from_2018, max_order = 3, selection = "BIC")
+mod_auto_BAA_rvi_d_from_2018
+
+
+# Построение модели AAA
+mod_ardl_aaa_rvi_d_from_2018 <- ardl(AAA_spread_d ~ rvi_d + d_kbd_short11 + 
+                                      slope_d2 + se10, 
+                                    data = data_big7_from_2018, order = mod_auto_AAA_rvi_d_from_2018$best_order)
+summary(mod_ardl_aaa_rvi_d_from_2018)
+
+
+# Достанем мультипликаторы
+a11 <- multipliers(mod_ardl_aaa_rvi_d_from_2018, type = "lr")
+a11 <- multipliers(mod_ardl_aaa_rvi_d_from_2018, type = "sr")
+a11
+
+
+# С нефтью
+mod_ardl_aaa_rvi_d_from_2018_brent <- ardl(AAA_spread_d ~ rvi_d + d_kbd_short11 + 
+                                       slope_d2 + se10 + brent_d, 
+                                     data = data_all2_with_brent_from_2018, order = c(1,1,1,1,1,1))
+summary(mod_ardl_aaa_rvi_d_from_2018_brent)
+
+
+# Достанем мультипликаторы
+a11 <- multipliers(mod_ardl_aaa_rvi_d_from_2018_brent, type = "lr")
+a11 <- multipliers(mod_ardl_aaa_rvi_d_from_2018_brent, type = "sr")
+a11
+AIC(mod_ardl_aaa_rvi_d_from_2018_brent)
+
+
+# Построение модели BAA
+mod_ardl_baa_rvi_d_from_2018 <- ardl(BAA_spread_d ~  rvi_d + d_kbd_short11 + 
+                                      slope_d2 + se10, 
+                                    data = data_big7_from_2018, order = mod_auto_BAA_rvi_d_from_2018$best_order)
+summary(mod_ardl_baa_rvi_d_from_2018)
+
+# Достанем мультипликаторы
+a12 <- multipliers(mod_ardl_baa_rvi_d_from_2018, type = "lr")
+a12 <- multipliers(mod_ardl_baa_rvi_d_from_2018, type = "sr")
+a12
+
+
+# С нефтью
+mod_ardl_baa_rvi_d_from_2018_brent <- ardl(BAA_spread_d ~  rvi_d + d_kbd_short11 + 
+                                       slope_d2 + se10 + brent_d, 
+                                     data = data_all2_with_brent_from_2018, order = c(1,1,1,1,1,1))
+summary(mod_ardl_baa_rvi_d_from_2018_brent)
+
+# Достанем мультипликаторы
+a12 <- multipliers(mod_ardl_baa_rvi_d_from_2018_brent, type = "lr")
+a12 <- multipliers(mod_ardl_baa_rvi_d_from_2018_brent, type = "sr")
+a12
+AIC(mod_ardl_baa_rvi_d_from_2018_brent)
+
+
+
+#### Построим ECM ####
+
+# Построим ARDL только на R_f и Slope
+data_ecm <- dplyr::select(data_big6, c(AAA_спред, BAA_спред, Краткосрочная_ставка, 
+                                       Наклон))
+# Построение моделей по всем датам AAA
+mod_ecm_aaa_all <- ardl(AAA_спред ~ Краткосрочная_ставка + 
+                          Наклон, 
+                         data = data_ecm, order = c(2, 1, 1))
+summary(mod_ecm_aaa_all)
+
+recm_AAA_all <- recm(mod_ecm_aaa_all, case = 2)
+summary(recm_AAA_all)
+
+
+# Построение моделей по всем датам BAA
+mod_ecm_baa_all <- ardl(BAA_спред ~ Краткосрочная_ставка + 
+                          Наклон, 
+                        data = data_ecm, order = c(2, 1, 1))
+summary(mod_ecm_baa_all)
+
+recm_BAA_all <- recm(mod_ecm_baa_all, case = 2)
+summary(recm_BAA_all)
+
+
+# Разделим данные
+data_ecm_until_2018 <- data_ecm[1: 1002, ]
+data_ecm_from_2018 <- data_ecm[1003: 2248, ]
+
+
+# До 2018 года
+# ААА
+mod_ecm_aaa_until_2018 <- ardl(AAA_спред ~ Краткосрочная_ставка + 
+                                          Наклон, 
+                                        data = data_ecm_until_2018, order = c(2, 1, 1))
+summary(mod_ecm_aaa_until_2018)
+
+recm_AAA_until_2018 <- recm(mod_ecm_aaa_until_2018, case = 2)
+summary(recm_AAA_until_2018)
+
+
+# BАА
+mod_ecm_baa_until_2018 <- ardl(BAA_спред ~ Краткосрочная_ставка + 
+                                 Наклон, 
+                               data = data_ecm_until_2018, order = c(2, 1, 1))
+summary(mod_ecm_baa_until_2018)
+
+recm_BAA_until_2018 <- recm(mod_ecm_baa_until_2018, case = 2)
+summary(recm_BAA_until_2018)
+
+
+
+# После 2018 года
+# ААА
+mod_ecm_aaa_from_2018 <- ardl(AAA_спред ~ Краткосрочная_ставка + 
+                                 Наклон, 
+                               data = data_ecm_from_2018, order = c(2, 1, 1))
+summary(mod_ecm_aaa_from_2018)
+
+recm_AAA_from_2018 <- recm(mod_ecm_aaa_from_2018, case = 2)
+summary(recm_AAA_from_2018)
+
+
+# BАА
+mod_ecm_baa_from_2018 <- ardl(BAA_спред ~ Краткосрочная_ставка + 
+                                Наклон, 
+                              data = data_ecm_from_2018, order = c(2, 1, 1))
+summary(mod_ecm_baa_from_2018)
+
+recm_BAA_from_2018 <- recm(mod_ecm_baa_from_2018, case = 2)
+summary(recm_BAA_from_2018)
+
+#### Делаем лагированные переменные ####
+
+# Создаем лагированные переменные
+RVI_1 <- data_big7$RVI[-1]
+Краткосрочная_ставка_р_1 <- data_big7$d_kbd_short11[-1]
+Наклон_р_1 <- data_big7$slope_d2[-1]
+Индекс_МосБиржи_д_1 <- data_big7$se10[-1]
+Наклон_1 <- data_big7$Наклон[-1]
+
+x <- NA
+RVI_1 <- c(RVI_1, x)
+Краткосрочная_ставка_р_1 <- c(Краткосрочная_ставка_р_1, x)
+Наклон_р_1 <- c(Наклон_р_1, x)
+Индекс_МосБиржи_д_1 <- c(Индекс_МосБиржи_д_1, x)
+Наклон_1 <- c(Наклон_1, x)
+
+# Добавляем в датасет
+data_big8 <- data.frame(data_big7, RVI_1, Краткосрочная_ставка_р_1,
+                         Наклон_р_1, Индекс_МосБиржи_д_1, Наклон_1)
+
+
+AAA_спред <- data_big8$AAA_спред[-1]
+x <- NA
+AAA_спред_1 <- c(AAA_спред, x)
+
+BAA_спред <- data_big8$BAA_спред[-1]
+x <- NA
+BAA_спред_1 <- c(BAA_спред, x)
+
+B_спред <- data_big8$B_спред[-1]
+x <- NA
+B_спред_1 <- c(B_спред, x)
+
+#### Строим цепи Маркова на больших данных. AAA####
+
+data_big8 <- data.frame(data_big8, AAA_спред_1, BAA_спред_1, B_спред_1)
+
+data_big9 <- na.omit(data_big8)
+
+# Создадаим еще лагированных переменных
+Краткосрочная_ставка_р_2 <- Краткосрочная_ставка_р_1[-1]
+Наклон_р_2 <- Наклон_р_1[-1]
+Индекс_МосБиржи_д_2 <- Индекс_МосБиржи_д_1[-1]
+RVI_2 <- RVI_1[-1]
+
+x <- NA
+Краткосрочная_ставка_р_2 <- c(Краткосрочная_ставка_р_2, x)
+Наклон_р_2 <- c(Наклон_р_2, x)
+Индекс_МосБиржи_д_2 <- c(Индекс_МосБиржи_д_2, x)
+RVI_2 <- c(RVI_2, x)
+
+# Меням размерности
+data_big10 <- data_big9
+data_big10$se10 <- data_big10$se10*100
+
+
+# Строим модель
+modlm_levels <- lm(AAA_спред ~ se10 + slope_d2 +
+                     d_kbd_short11
+                   , data = data_big10)
+
+
+modlm_levels2 <- msmFit(modlm_levels,k=2,p=2,
+                        sw=c(rep(TRUE, 7)), 
+)
+
+
+# Смотрим показатели модели
+summary(modlm_levels2)
+plotProb(modlm_levels2,which=2)
+
+
+#диагностика
+#вероятность использования конкретного режима
+plotProb(modlm_levels2,which=1)
+
+#выделение областей для режима
+plotProb(modlm_levels2,which=2)
+
+#как ведут себя остатки?
+plotDiag(modlm_levels2, which = 1)
+plotDiag(modlm_levels2, which = 2)
+plotDiag(modlm_levels2, which = 3)
+
+
+
+# То же самое с RVI
+modlm_levels3 <- lm(AAA_спред ~ se10 + slope_d2 +
+                      d_kbd_short11 + RVI
+                    , data = data_big10)
+
+
+modlm_levels4 <- msmFit(modlm_levels3,k=2,p=2,
+                        sw=c(rep(TRUE, 8)), 
+)
+
+# Смотрим показатели модели
+summary(modlm_levels4)
+plotProb(modlm_levels4,which=2)
+# Особо ничего не меняется
+
+
+# Достанем режимы
+k <- NULL
+for(i in 1:2245){
+  k[i] <- ifelse(modlm_levels2@Fit@filtProb[i,1] > 0.5, 1, 0)
+}
+k
+
+
+
+View(data_big10)
+# Доля наблюдений в 1 режиме и их число
+1 - (sum(k) / length(k))
+which(k == 1) %>% length()
+which(k == 0) %>% length()
+
+
+#### Строим цепи Маркова на больших данных. BAA####
+
+modlm_levels2_BAA <- lm(BAA_спред ~ se10 + slope_d2 +
+                      d_kbd_short11
+                   , data = data_big10)
+
+
+modlm_levels2_BAA <- msmFit(modlm_levels2_BAA,k=2,p=2,
+                       sw=c(rep(TRUE, 7)), 
+)
+
+
+# Смотрим показатели модели
+summary(modlm_levels2_BAA)
+plotProb(modlm_levels2_BAA,which=2)
+
+
+#диагностика
+#вероятность использования конкретного режима
+plotProb(modlm_levels2_BAA,which=1)
+
+#выделение областей для режима
+plotProb(modlm_levels2_BAA,which=2)
+
+#как ведут себя остатки?
+plotDiag(modlm_levels2_BAA, which = 1)
+plotDiag(modlm_levels2_BAA, which = 2)
+plotDiag(modlm_levels2_BAA, which = 3)
+
+
+# А если с RVI?
+modlm_levels3_BAA <- lm(BAA_спред ~ se10 + slope_d2 +
+                          d_kbd_short11 + RVI
+                        , data = data_big10)
+
+
+modlm_levels4_BAA <- msmFit(modlm_levels3_BAA,k=2,p=2,
+                            sw=c(rep(TRUE, 8)), 
+)
+
+
+# Смотрим показатели модели
+summary(modlm_levels4_BAA)
+plotProb(modlm_levels4_BAA,which=2)
+# Ничего не меняется
+
+
+f <- NULL
+for(i in 1:2246){
+  f[i] <- ifelse(modlm_levels2_BAA@Fit@filtProb[i,1] < 0.5, 1, 0)
+}
+f
+
+
+# Доля наблюдений в 1 режиме
+1 - (sum(f) / length(f))
+which(f == 1) %>% length()
+which(f == 0) %>% length()
+
+
+#### Строим новый MS на всех данных с почищенными наблюдениями ####
+
+# Строим модель для AAA
+mod_lm_MS_all_AAA <- lm(AAA_spread_d ~ rvi_d +
+                          d_kbd_short11 + slope_d2+ se10, data = data_all2)
+
+
+mod_MS_all_AAA <- msmFit(mod_lm_MS_all_AAA,k=2,p=1,
+                        sw=c(rep(TRUE, 7)))
+summary(mod_MS_all_AAA)
+plotProb(mod_MS_all_AAA,which=2)
+
+
+# А если с нефтью?
+mod_lm_MS_all_AAA_brent <- lm(AAA_spread_d ~ rvi_d +
+                          d_kbd_short11 + slope_d2+ se10 + brent_d, data = data_all2_with_brent)
+
+
+mod_MS_all_AAA_brent <- msmFit(mod_lm_MS_all_AAA_brent,k=2,p=1,
+                         sw=c(rep(TRUE, 8)))
+summary(mod_MS_all_AAA_brent)
+plotProb(mod_MS_all_AAA_brent,which=2)
+
+length(mod_MS_all_AAA_brent@Fit@filtProb[,1])
+
+#### Достанем режимы ####
+# Вся выборка 
+# AAA
+stab_reg_aaa_all <- NULL
+for(i in 1:2237){
+  stab_reg_aaa_all[i] <- ifelse(mod_MS_all_AAA@Fit@filtProb[i,1] < 0.5, 1, 0)
+}
+stab_reg_aaa_all
+
+# С нефтью
+unstab_reg_aaa_all_brent <- NULL
+for(i in 1:2202){
+  unstab_reg_aaa_all_brent[i] <- ifelse(mod_MS_all_AAA_brent@Fit@filtProb[i,1] > 0.5, 1, 0)
+}
+unstab_reg_aaa_all_brent
+sum(unstab_reg_aaa_all_brent)/ length(unstab_reg_aaa_all_brent)
+
+
+# BAA
+stab_reg_baa_all <- NULL
+for(i in 1:2237){
+  stab_reg_baa_all[i] <- ifelse(mod_MS_all_BAA@Fit@filtProb[i,1] > 0.5, 1, 0)
+}
+stab_reg_baa_all
+
+# С нефтью
+unstab_reg_baa_all_brent <- NULL
+for(i in 1:2202){
+  unstab_reg_baa_all_brent[i] <- ifelse(mod_MS_all_BAA_brent@Fit@filtProb[i,1] > 0.5, 1, 0)
+}
+unstab_reg_baa_all_brent
+sum(unstab_reg_baa_all_brent)/ length(unstab_reg_baa_all_brent)
+
+
+
+# Данные до 2018 года
+# AAA
+stab_reg_aaa_until_2018 <- NULL
+for(i in 1:987){
+  stab_reg_aaa_until_2018[i] <- ifelse(mod_MS_until_2018_AAA_brent@Fit@filtProb[i,1] < 0.5, 1, 0)
+}
+stab_reg_aaa_until_2018
+sum(stab_reg_aaa_until_2018) / length(stab_reg_aaa_until_2018)
+
+
+# С нефтью
+unstab_reg_aaa_until_2018_brent <- NULL
+for(i in 1:986){
+  unstab_reg_aaa_until_2018_brent[i] <- ifelse(mod_MS_until_2018_AAA_brent@Fit@filtProb[i,1] > 0.5, 1, 0)
+}
+unstab_reg_aaa_until_2018_brent
+
+
+
+# BAA
+stab_reg_baa_until_2018 <- NULL
+for(i in 1:987){
+  stab_reg_baa_until_2018[i] <- ifelse(mod_MS_until_2018_BAA_brent@Fit@filtProb[i,1] > 0.5, 1, 0)
+}
+stab_reg_baa_until_2018
+sum(stab_reg_baa_until_2018) / length(stab_reg_baa_until_2018)
+
+
+# С нефтью
+unstab_reg_baa_until_2018_brent <- NULL
+for(i in 1:986){
+  unstab_reg_baa_until_2018_brent[i] <- ifelse(mod_MS_until_2018_BAA_brent@Fit@filtProb[i,1] > 0.5, 1, 0)
+}
+unstab_reg_baa_until_2018_brent
+
+
+
+
+# Данные после 2018 года
+# AAA
+stab_reg_aaa_from_2018 <- NULL
+for(i in 1:1215){
+  stab_reg_aaa_from_2018[i] <- ifelse(mod_MS_from_2018_AAA_brent@Fit@filtProb[i,1] < 0.5, 1, 0)
+}
+stab_reg_aaa_from_2018
+sum(stab_reg_aaa_from_2018) / length(stab_reg_aaa_from_2018)
+
+
+# С нефтью
+unstab_reg_aaa_from_2018_brent <- NULL
+for(i in 1:1215){
+  unstab_reg_aaa_from_2018_brent[i] <- ifelse(mod_MS_from_2018_AAA_brent@Fit@filtProb[i,1] > 0.5, 1, 0)
+}
+unstab_reg_aaa_from_2018_brent
+
+
+
+
+# BAA
+stab_reg_baa_from_2018 <- NULL
+for(i in 1:1215){
+  stab_reg_baa_from_2018[i] <- ifelse(mod_MS_from_2018_BAA_brent@Fit@filtProb[i,1] > 0.5, 1, 0)
+}
+stab_reg_baa_from_2018
+sum(stab_reg_baa_from_2018) / length(stab_reg_baa_from_2018)
+
+
+# С нефтью
+unstab_reg_baa_from_2018_brent <- NULL
+for(i in 1:1215){
+  unstab_reg_baa_from_2018_brent[i] <- ifelse(mod_MS_from_2018_BAA_brent@Fit@filtProb[i,1] > 0.5, 1, 0)
+}
+unstab_reg_baa_from_2018_brent
+
+
+
+
+#### Построим логит ####
+# install.packages("xlsx")
+library(xlsx)
+write_xlsx(data_all3, path = "data_all3.xlsx")
+write_xlsx(data_all3_baa, path = "data_all3_baa.xlsx")
+write_xlsx(data_all3_with_brent, path = "data_all3_with_brent.xlsx")
+write_xlsx(data_all2_with_brent_from_2018, path = "data_all2_with_brent_from_2018.xlsx")
+write_xlsx(data_all2_with_brent_until_2018, path = "data_all2_with_brent_until_2018.xlsx")
+# Добавим RVI 
+
+logit_aaa_all <- glm(unstab_reg_aaa_all_brent ~ RVI[-1] + d_kbd_short11[-1] +
+                       slope_d2[-1] + se10[-1] + brent_d[-1], 
+                data = data_all3, family = binomial(link = "logit"), x = TRUE)
+summary(logit_aaa_all)
+
+logit_aaa_all2 <- stepAIC(logit_aaa_all)
+logit_aaa_all2 <- glm(unstab_reg_aaa_all_brent ~ RVI[-1], 
+                      data = data_all3_with_brent, family = binomial(link = "logit"), x = TRUE)
+summary(logit_aaa_all2)
+pR2(logit_aaa_all2, which = "McFadden")
+
+
+y <- as.factor(unstab_reg_aaa_all_brent)
+Pr <- predict(logit_aaa_all2, type='response')
+y_pr <- as.factor(ifelse(Pr>0.5,1,0))
+data_for_j <- data.frame(Pr, y)
+write_xlsx(data_for_j, path = "data_for_j.xlsx")
+caret::confusionMatrix(y_pr,y)
+mplot_roc(y,Pr)
+library(lares)
+
+data_all3 <- data.frame(na.omit(data_all2_with_brent), stab_reg_aaa_all)
+data_all3_baa <- data.frame(data_all2_with_brent[-1,], stab_reg_baa_all)
+ggplot(data_all3) + geom_point(aes(stab_reg_aaa_all, RVI ))
+t.test(RVI ~ stab_reg_aaa_all, data = data_all3)
+summary(RVI_filter)
+
+RVI_filter <- dplyr::filter(.data = data_all3, RVI < 100)
+RVI_filter %>% na.omit()
+
+
+
+# BAA
+logit_baa_all <- glm(unstab_reg_baa_all_brent ~ RVI[-1] + d_kbd_short11[-1] +
+                       slope_d2[-1] + se10[-1] +brent_d[-1], 
+                     data = data_all3_with_brent, family = binomial(link = "logit"), x = TRUE)
+summary(logit_baa_all)
+
+logit_baa_all2 <- stepAIC(logit_baa_all)
+summary(logit_baa_all2)
+pR2(logit_baa_all2, which = "McFadden")
+
+y <- as.factor(unstab_reg_baa_all_brent)
+Pr <- predict(logit_baa_all2, type='response')
+y_pr <- as.factor(ifelse(Pr>0.5,1,0))
+data_for_j_baa <- data.frame(Pr, y)
+write_xlsx(data_for_j_baa, path = "data_for_j_baa.xlsx")
+caret::confusionMatrix(y_pr,y)
+mplot_roc(y,Pr)
+
+
+# Построим выдачи
+maBina(logit_aaa_all2)
+maBina(logit_baa_all2)
+logit_list <- list(logit_aaa_all2, logit_baa_all2 )
+stargazer(logit_list, type = "html",
+          out = "logit_models.html", rownames = TRUE)
+
+
+#### Выдачи MS ####
+
+
+# Смотрим показатели модели
+
+summary(mod_MS_all_AAA_brent)
+plotProb(mod_MS_all_AAA_brent,which=2)
+a13 <- mod_MS_all_AAA_brent
+AIC(mod_MS_all_AAA_brent)
+
+
+
+# Строим модель для BAA
+mod_lm_MS_all_BAA <- lm(BAA_spread_d ~ rvi_d +
+                          d_kbd_short11 + slope_d2+ se10, data = data_all2)
+
+
+mod_MS_all_BAA <- msmFit(mod_lm_MS_all_BAA,k=2,p=1,
+                     sw=c(rep(TRUE, 7)))
+
+
+# А если с нефтью
+mod_lm_MS_all_BAA_brent <- lm(BAA_spread_d ~ rvi_d +
+                          d_kbd_short11 + slope_d2+ se10 + brent_d, data = data_all2_with_brent)
+
+
+mod_MS_all_BAA_brent <- msmFit(mod_lm_MS_all_BAA_brent,k=2,p=1,
+                         sw=c(rep(TRUE, 8)))
+
+
+# Смотрим показатели модели
+summary(mod_MS_all_BAA_brent)
+plotProb(mod_MS_all_BAA_brent,which=2)
+a14 <- mod_MS_all_BAA_brent
+AIC(mod_MS_all_BAA_brent)
+
+
+#### TVAR по всей подвыборке ####
+# AAA
+data_tvar_aa_all <- subset(data_all2, select = c(d_kbd_short11,
+                                             slope_d2, se10,
+                                             AAA_spread_d))
+
+mod_tvar_AAA_all <- TVAR(data = data_tvar_aa_all, lag = 1, model = "TAR",
+                              trace =TRUE, plot = TRUE, thVar = data_all2$RVI, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_AAA_all)
+BIC(mod_tvar_AAA_all)
+
+
+# А если построить с RVI как эндогенной
+data_tvar_aa_all2 <- subset(data_all2, select = c(rvi_d, d_kbd_short11,
+                                                                   slope_d2, se10,
+                                                                   AAA_spread_d))
+
+mod_tvar_AAA_all2 <- TVAR(data = data_tvar_aa_all2, lag = 1, model = "TAR",
+                                trace =TRUE, plot = TRUE, thVar = data_all2$RVI, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_AAA_all2)
+a15 <- summary(mod_tvar_AAA_all2)
+
+
+
+
+# А если еще и нефть
+data_tvar_aa_all2_brent <- subset(data_all2_with_brent, select = c(rvi_d, d_kbd_short11,
+                                                                   slope_d2, se10, brent_d,
+                                                                   AAA_spread_d))
+data_tvar_aa_all2_brent <- na.omit(data_tvar_aa_all2_brent)
+data_all3_with_brent <- na.omit(data_all2_with_brent)
+mod_tvar_AAA_all2_brent <- TVAR(data = data_tvar_aa_all2_brent, lag = 1, model = "TAR",
+                                trace =TRUE, plot = TRUE, thVar = data_all3_with_brent$RVI, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_AAA_all2_brent)
+a15 <- summary(mod_tvar_AAA_all2_brent)
+mod_tvar_AAA_all2_brent
+
+
+#### Расчет R2 ####
+# Для AAA по всей выборке
+R_2_tvar_aaa_brent <- 1- sum((data_tvar_aa_all2_brent$AAA_spread_d[-1] - mod_tvar_AAA_all2_brent$fitted.values[ , 6])^2)/sum(((data_tvar_aa_all2_brent$AAA_spread_d[-1] - mean(data_tvar_aa_all2_brent$AAA_spread_d[-1]))^2))
+
+R_2_tvar_baa_brent <- 1- sum((data_tvar_baa_all2_brent$BAA_spread_d[-1] - mod_tvar_BAA_all2_brent$fitted.values[ , 6])^2)/sum(((data_tvar_baa_all2_brent$BAA_spread_d[-1] - mean(data_tvar_baa_all2_brent$BAA_spread_d[-1]))^2))
+
+
+# Общий
+R_2_tvar_aaa_brent <- 1- sum(mod_tvar_AAA_all2_brent$residuals[, 6]^2)/sum(((data_tvar_aa_all2_brent$AAA_spread_d[-1] - mean(data_tvar_aa_all2_brent$AAA_spread_d[-1]))^2))
+
+
+# Высокий режим
+h <- (mod_tvar_AAA_all2_brent$model.specific$regime-1)[-1] * data_tvar_aa_all2_brent$AAA_spread_d[-1]
+h <- h[! h %in% 0]
+
+resid_high <- mod_tvar_AAA_all2_brent$residuals[, 6] * (mod_tvar_AAA_all2_brent$model.specific$regime-1)[-1]
+resid_high <- resid_high[! resid_high %in% 0]
+
+# Итог
+R_2_tvar_aaa_brent_high_regime <- 1 - sum((resid_high)^2)/(sum((h - mean(h))^2))
+
+
+# Низкий режим
+l <- replace(mod_tvar_AAA_all2_brent$model.specific$regime, mod_tvar_AAA_all2_brent$model.specific$regime > 1.5, 0)[-1] *
+  data_tvar_aa_all2_brent$AAA_spread_d[-1]
+
+l <- l[! l %in% 0]
+
+resid_low <- mod_tvar_AAA_all2_brent$residuals[, 6] * replace(mod_tvar_AAA_all2_brent$model.specific$regime, mod_tvar_AAA_all2_brent$model.specific$regime > 1.5, 0)[-1]
+resid_low <- resid_low[! resid_low %in% 0]
+
+# Итог
+R_2_tvar_aaa_brent_low_regime <- 1 - sum((resid_low)^2)/(sum((l - mean(l))^2))
+
+
+# Для BAA по всей выборке
+# Высокий режим
+h <- (mod_tvar_BAA_all2_brent$model.specific$regime-1)[-1] * data_tvar_baa_all2_brent$BAA_spread_d[-1]
+h <- h[! h %in% 0]
+
+resid_high <- mod_tvar_BAA_all2_brent$residuals[, 6] * (mod_tvar_BAA_all2_brent$model.specific$regime-1)[-1]
+resid_high <- resid_high[! resid_high %in% 0]
+
+# Итог
+R_2_tvar_BAA_brent_high_regime <- 1 - sum((resid_high)^2)/(sum((h - mean(h))^2))
+
+
+# Низкий режим
+l <- replace(mod_tvar_BAA_all2_brent$model.specific$regime, mod_tvar_BAA_all2_brent$model.specific$regime > 1.5, 0)[-1] *
+  data_tvar_baa_all2_brent$BAA_spread_d[-1]
+
+l <- l[! l %in% 0]
+
+resid_low <- mod_tvar_BAA_all2_brent$residuals[, 6] * replace(mod_tvar_BAA_all2_brent$model.specific$regime, mod_tvar_BAA_all2_brent$model.specific$regime > 1.5, 0)[-1]
+resid_low <- resid_low[! resid_low %in% 0]
+
+# Итог
+R_2_tvar_BAA_brent_low_regime <- 1 - sum((resid_low)^2)/(sum((l - mean(l))^2))
+
+
+
+
+data_all3_with_brent_until_2018
+mod_tvar_AAA_until_2018_2_brent
+# Для AAA до 2018 года
+# Высокий режим
+h <- (mod_tvar_AAA_until_2018_2_brent$model.specific$regime-1)[-1] * data_all3_with_brent_until_2018$AAA_spread_d[-1]
+h <- h[! h %in% 0]
+
+resid_high <- mod_tvar_AAA_until_2018_2_brent$residuals[, 6] * (mod_tvar_AAA_until_2018_2_brent$model.specific$regime-1)[-1]
+resid_high <- resid_high[! resid_high %in% 0]
+
+# Итог
+R_2_tvar_aaa_brent_high_regime <- 1 - sum((resid_high)^2)/(sum((h - mean(h))^2))
+
+
+# Низкий режим
+l <- replace(mod_tvar_AAA_until_2018_2_brent$model.specific$regime, mod_tvar_AAA_until_2018_2_brent$model.specific$regime > 1.5, 0)[-1] *
+  data_all3_with_brent_until_2018$AAA_spread_d[-1]
+
+l <- l[! l %in% 0]
+
+resid_low <- mod_tvar_AAA_until_2018_2_brent$residuals[, 6] * replace(mod_tvar_AAA_until_2018_2_brent$model.specific$regime, mod_tvar_AAA_until_2018_2_brent$model.specific$regime > 1.5, 0)[-1]
+resid_low <- resid_low[! resid_low %in% 0]
+
+# Итог
+R_2_tvar_aaa_brent_low_regime <- 1 - sum((resid_low)^2)/(sum((l - mean(l))^2))
+
+
+
+# Для BAA до 2018 года
+# Высокий режим
+h <- (mod_tvar_BAA_until_2018_2_brent$model.specific$regime-1)[-1] * data_all3_with_brent_until_2018$BAA_spread_d[-1]
+h <- h[! h %in% 0]
+
+resid_high <- mod_tvar_BAA_until_2018_2_brent$residuals[, 6] * (mod_tvar_BAA_until_2018_2_brent$model.specific$regime-1)[-1]
+resid_high <- resid_high[! resid_high %in% 0]
+
+# Итог
+R_2_tvar_BAA_brent_high_regime <- 1 - sum((resid_high)^2)/(sum((h - mean(h))^2))
+
+
+# Низкий режим
+l <- replace(mod_tvar_BAA_until_2018_2_brent$model.specific$regime, mod_tvar_BAA_until_2018_2_brent$model.specific$regime > 1.5, 0)[-1] *
+  data_all3_with_brent_until_2018$BAA_spread_d[-1]
+
+l <- l[! l %in% 0]
+
+resid_low <- mod_tvar_BAA_until_2018_2_brent$residuals[, 6] * replace(mod_tvar_BAA_until_2018_2_brent$model.specific$regime, mod_tvar_BAA_until_2018_2_brent$model.specific$regime > 1.5, 0)[-1]
+resid_low <- resid_low[! resid_low %in% 0]
+
+# Итог
+R_2_tvar_BAA_brent_low_regime <- 1 - sum((resid_low)^2)/(sum((l - mean(l))^2))
+  
+
+
+
+
+mod_tvar_AAA_from_2018_brent
+data_all3_with_brent_from_2018
+# Для AAA после 2018 года
+# Высокий режим
+h <- (mod_tvar_AAA_from_2018_brent$model.specific$regime-1)[-1] * data_all3_with_brent_from_2018$AAA_spread_d[-1]
+h <- h[! h %in% 0]
+
+resid_high <- mod_tvar_AAA_from_2018_brent$residuals[, 6] * (mod_tvar_AAA_from_2018_brent$model.specific$regime-1)[-1]
+resid_high <- resid_high[! resid_high %in% 0]
+
+# Итог
+R_2_tvar_aaa_brent_high_regime <- 1 - sum((resid_high)^2)/(sum((h - mean(h))^2))
+
+
+# Низкий режим
+l <- replace(mod_tvar_AAA_from_2018_brent$model.specific$regime, mod_tvar_AAA_from_2018_brent$model.specific$regime > 1.5, 0)[-1] *
+  data_all3_with_brent_from_2018$AAA_spread_d[-1]
+
+l <- l[! l %in% 0]
+
+resid_low <- mod_tvar_AAA_from_2018_brent$residuals[, 6] * replace(mod_tvar_AAA_from_2018_brent$model.specific$regime, mod_tvar_AAA_from_2018_brent$model.specific$regime > 1.5, 0)[-1]
+resid_low <- resid_low[! resid_low %in% 0]
+
+# Итог
+R_2_tvar_aaa_brent_low_regime <- 1 - sum((resid_low)^2)/(sum((l - mean(l))^2))
+
+
+
+# Для BAA после 2018 года
+# Высокий режим
+h <- (mod_tvar_BAA_from_2018_brent$model.specific$regime-1)[-1] * data_all3_with_brent_from_2018$BAA_spread_d[-1]
+h <- h[! h %in% 0]
+
+resid_high <- mod_tvar_BAA_from_2018_brent$residuals[, 6] * (mod_tvar_BAA_from_2018_brent$model.specific$regime-1)[-1]
+resid_high <- resid_high[! resid_high %in% 0]
+
+# Итог
+R_2_tvar_BAA_brent_high_regime <- 1 - sum((resid_high)^2)/(sum((h - mean(h))^2))
+
+
+# Низкий режим
+l <- replace(mod_tvar_BAA_from_2018_brent$model.specific$regime, mod_tvar_BAA_from_2018_brent$model.specific$regime > 1.5, 0)[-1] *
+  data_all3_with_brent_from_2018$BAA_spread_d[-1]
+
+l <- l[! l %in% 0]
+
+resid_low <- mod_tvar_BAA_from_2018_brent$residuals[, 6] * replace(mod_tvar_BAA_from_2018_brent$model.specific$regime, mod_tvar_BAA_from_2018_brent$model.specific$regime > 1.5, 0)[-1]
+resid_low <- resid_low[! resid_low %in% 0]
+
+# Итог
+R_2_tvar_BAA_brent_low_regime <- 1 - sum((resid_low)^2)/(sum((l - mean(l))^2))
+
+
+
+
+
+
+#### Продолжение TVAR ####
+
+# Достанем переключение
+tvar_unstab_reg_aaa_all <- a15$model.specific$regime -1
+tvar_unstab_reg_baa_all <- a16$model.specific$regime -1
+
+
+
+# Если переключение по нефти?
+mod_tvar_AAA_all2_brent_th <-  TVAR(data = data_tvar_aa_all2_brent, lag = 1, model = "TAR",
+                                trace =TRUE, plot = TRUE, thVar = data_all3_with_brent$brent, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_AAA_all2_brent_th)
+
+
+# А если сделать с 2 отсечениями
+mod_tvar_AAA_all2_brent_2 <-  TVAR(data = data_tvar_aa_all2_brent, lag = 1, model = "TAR",
+                                    trace =TRUE, plot = TRUE, thVar = data_all3_with_brent$RVI, nthresh = 2, trim = 0.1 
+)
+summary(mod_tvar_AAA_all2_brent_2)
+
+
+# А нужно ли 2 отсечения
+TVAR.LRtest(data_tvar_aa_all2, lag = 1, thVar = data_all2$RVI, plot = TRUE,
+            model = "TAR", trace = TRUE, test = "2vs3")
+?TVAR.LRtest
+
+
+
+# BAA
+data_tvar_baa_all <- subset(data_all2, select = c(d_kbd_short11,
+                                             slope_d2, se10,
+                                             BAA_spread_d))
+
+mod_tvar_BAA_all <- TVAR(data = data_tvar_baa_all, lag = 1, model = "TAR",
+                     trace =TRUE, plot = TRUE, thVar = data_all2$RVI, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_BAA_all)
+
+
+
+# А если построить с RVI как эндогенной
+data_tvar_baa_all2 <- subset(data_all2, select = c(rvi_d, d_kbd_short11,
+                                                  slope_d2, se10,
+                                                  BAA_spread_d))
+
+mod_tvar_BAA_all2 <- TVAR(data = data_tvar_baa_all2, lag = 1, model = "TAR",
+                         trace =TRUE, plot = TRUE, thVar = data_all2$RVI, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_BAA_all2)
+a16 <- summary(mod_tvar_BAA_all2)
+
+
+#### Тест на неравное влияние безрисковой ставки ####
+S_pool <- ((325 - 1)*a13@seCoef[2, 3]^2 + (1877 -1)*a13@seCoef[1, 3]^2)/
+  ((325 -1) + (1877-1))
+se_pool <- sqrt(S_pool*(1/325 + 1/1877))
+
+
+(a13@Coef[2, 3] - a13@Coef[1, 3])/se_pool
+
+
+
+S_pool <- ((2185 - 1)*a$`Std. Error`[6]^2 + (981 -1)*a5$`Std. Error`[6]^2)/
+  ((2185 -1) + (981-1))
+se_pool <- sqrt(S_pool*(1/2185 + 1/981))
+
+
+se_pool <- sqrt(a$`Std. Error`[6]^2/2185 + a5$`Std. Error`[6]^2/981)
+
+
+(a$Estimate[6] - a5$Estimate[6])/se_pool
+
+
+
+se_pool <- sqrt(a14@seCoef[1,3]^2/326 + a14@seCoef[1,3]^2/1876)
+
+
+(a14@Coef[1,3] - a14@Coef[2,3])/se_pool
+
+
+
+# А с нефтью
+data_tvar_baa_all2_brent <- subset(data_all2_with_brent, select = c(rvi_d, d_kbd_short11,
+                                                   slope_d2, se10, brent_d,
+                                                   BAA_spread_d))
+data_tvar_baa_all2_brent <- na.omit(data_tvar_baa_all2_brent)
+
+
+mod_tvar_BAA_all2_brent <- TVAR(data = data_tvar_baa_all2_brent, lag = 1, model = "TAR",
+                          trace =TRUE, plot = TRUE, thVar =  data_all3_with_brent$RVI, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_BAA_all2_brent)
+a16 <- summary(mod_tvar_BAA_all2_brent)
+
+
+
+# # Если переключение по нефти?
+mod_tvar_BAA_all2_brent_th <- TVAR(data = data_tvar_baa_all2_brent, lag = 1, model = "TAR",
+                                trace =TRUE, plot = TRUE, thVar =  data_all3_with_brent$brent, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_BAA_all2_brent_th)
+
+
+# 2 отсечения
+mod_tvar_BAA_all2_brent_th_2 <- TVAR(data = data_tvar_baa_all2_brent, lag = 1, model = "TAR",
+                                   trace =TRUE, plot = TRUE, thVar =  data_all3_with_brent$RVI, nthresh = 2, trim = 0.1 
+)
+summary(mod_tvar_BAA_all2_brent_th_2)
+
+#### Переключение MS и TVAR ####
+
+tvar_unstab_reg_aaa_all
+tvar_unstab_reg_baa_all
+unstab_reg_aaa_all_brent
+unstab_reg_baa_all_brent
+
+
+data_regimes <- data.frame(tvar_unstab_reg_aaa_all[-1], tvar_unstab_reg_baa_all[-1],
+                           unstab_reg_aaa_all_brent, unstab_reg_baa_all_brent, data_all3_with_brent$Даты[-1])
+
+# AAA
+h <- dplyr::select(data_regimes, c(unstab_reg_aaa_all_brent, data_all3_with_brent.Даты..1.)) %>% mutate(type="MS")
+names(h) <- c("values", "Даты", "type")
+l <- dplyr::select(data_regimes, c(tvar_unstab_reg_aaa_all..1., data_all3_with_brent.Даты..1.)) %>% mutate(type="TVAR")
+names(l) <- c("values", "Даты", "type")
+y <- rbind(h, l)
+
+ggplot(y,  aes(x = Даты, y = values, color = type)) + geom_line()
+
+
+# BAA
+h <- dplyr::select(data_regimes, c(unstab_reg_baa_all_brent, data_all3_with_brent.Даты..1.)) %>% mutate(type="MS")
+names(h) <- c("values", "Даты", "type")
+l <- dplyr::select(data_regimes, c(tvar_unstab_reg_baa_all..1., data_all3_with_brent.Даты..1.)) %>% mutate(type="TVAR")
+names(l) <- c("values", "Даты", "type")
+y <- rbind(h, l)
+
+ggplot(y,  aes(x = Даты, y = values, color = type)) + geom_line()
+
+?TVAR
+
+
+
+#### Строим новый MS на данных до 2018 года с почищенынми наблюдениями ####
+
+# Строим модель для AAA
+mod_lm_MS_until_2018_AAA <- lm(AAA_spread_d ~ rvi_d + 
+                                 d_kbd_short11 + slope_d2 + se10 , data = data_big7_until_2018)
+
+
+mod_MS_until_2018_AAA <- msmFit(mod_lm_MS_until_2018_AAA,k=2,p=1,
+                         sw=c(rep(TRUE, 7)))
+
+
+# Смотрим показатели модели
+summary(mod_MS_until_2018_AAA)
+plotProb(mod_MS_until_2018_AAA,which=2)
+a17 <- mod_MS_until_2018_AAA
+
+
+
+# Теперь с нефтью
+mod_lm_MS_until_2018_AAA_brent <- lm(AAA_spread_d ~ rvi_d + 
+                                 d_kbd_short11 + slope_d2 + se10 + brent_d , data = data_all2_with_brent_until_2018)
+
+
+mod_MS_until_2018_AAA_brent <- msmFit(mod_lm_MS_until_2018_AAA_brent,k=2,p=1,
+                                sw=c(rep(TRUE, 8)))
+
+# Смотрим показатели модели
+summary(mod_MS_until_2018_AAA_brent)
+plotProb(mod_MS_until_2018_AAA_brent,which=2)
+a17 <- mod_MS_until_2018_AAA_brent
+AIC(mod_MS_until_2018_AAA_brent)
+
+
+
+# Строим модель для BAA
+mod_lm_MS_until_2018_BAA <- lm(BAA_spread_d ~ rvi_d + 
+                                 d_kbd_short11 + slope_d2 + se10, data = data_big7_until_2018)
+
+
+mod_MS_until_2018_BAA <- msmFit(mod_lm_MS_until_2018_BAA,k=2,p=1,
+                         sw=c(rep(TRUE, 7)))
+
+
+# Смотрим показатели модели
+summary(mod_MS_until_2018_BAA)
+plotProb(mod_MS_until_2018_BAA,which=2)
+a18 <- mod_MS_until_2018_BAA
+
+
+# А теперь с нефтью
+mod_lm_MS_until_2018_BAA_brent <- lm(BAA_spread_d ~ rvi_d + 
+                                 d_kbd_short11 + slope_d2 + se10 + brent_d, data = data_all2_with_brent_until_2018)
+
+
+mod_MS_until_2018_BAA_brent <- msmFit(mod_lm_MS_until_2018_BAA_brent,k=2,p=1,
+                                sw=c(rep(TRUE, 8)))
+
+
+# Смотрим показатели модели
+summary(mod_MS_until_2018_BAA_brent)
+plotProb(mod_MS_until_2018_BAA_brent,which=2)
+a18 <- mod_MS_until_2018_BAA_brent
+AIC(mod_MS_until_2018_BAA_brent)
+
+
+#### TVAR по подвыборке до 2018 года ####
+# AAA
+data_tvar_aa_until_2018 <- subset(data_big7_until_2018, select = c(d_kbd_short11,
+                                                 slope_d2, se10,
+                                                 AAA_spread_d))
+
+mod_tvar_AAA_until_2018 <- TVAR(data = data_tvar_aa_until_2018, lag = 1, model = "TAR",
+                         trace =TRUE, plot = TRUE, thVar = data_big7_until_2018$RVI, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_AAA_until_2018)
+
+
+
+# Если RVI эндогенная
+data_tvar_aa_until_2018_2 <- subset(data_big7_until_2018, select = c(rvi_d, d_kbd_short11,
+                                                                   slope_d2, se10,
+                                                                   AAA_spread_d))
+
+mod_tvar_AAA_until_2018_2 <- TVAR(data = data_tvar_aa_until_2018_2, lag = 1, model = "TAR",
+                                trace =TRUE, plot = TRUE, thVar = data_big7_until_2018$RVI, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_AAA_until_2018_2)
+a19 <- summary(mod_tvar_AAA_until_2018_2)
+
+
+# Если добавить нефть?
+data_tvar_aa_until_2018_2_brent <- subset(data_all2_with_brent_until_2018, select = c(rvi_d, d_kbd_short11,
+                                                                     slope_d2, se10, brent_d,
+                                                                     AAA_spread_d))
+data_tvar_aa_until_2018_2_brent <- na.omit(data_tvar_aa_until_2018_2_brent)
+data_all3_with_brent_until_2018 <- na.omit(data_all2_with_brent_until_2018)
+
+mod_tvar_AAA_until_2018_2_brent <- TVAR(data = data_tvar_aa_until_2018_2_brent, lag = 1, model = "TAR",
+                                  trace =TRUE, plot = TRUE, thVar = data_all3_with_brent_until_2018$RVI, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_AAA_until_2018_2_brent)
+a19 <- summary(mod_tvar_AAA_until_2018_2_brent)
+
+
+# Если переключение по нефти?
+mod_tvar_AAA_until_2018_2_brent_th <- TVAR(data = data_tvar_aa_until_2018_2_brent, lag = 1, model = "TAR",
+                                        trace =TRUE, plot = TRUE, thVar = data_all3_with_brent_until_2018$brent, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_AAA_until_2018_2_brent_th)
+
+
+
+# BAA
+data_tvar_baa_until_2018 <- subset(data_big7_until_2018, select = c(d_kbd_short11,
+                                                  slope_d2, se10,
+                                                  BAA_spread_d))
+
+mod_tvar_BAA_until_2018 <- TVAR(data = data_tvar_baa_until_2018, lag = 1, model = "TAR",
+                         trace =TRUE, plot = TRUE, thVar = data_big7_until_2018$RVI, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_BAA_until_2018)
+# Лучше с 1 лагом
+
+
+# Если RVI эндогенная
+data_tvar_baa_until_2018_2 <- subset(data_big7_until_2018, select = c(rvi_d, d_kbd_short11,
+                                                                     slope_d2, se10,
+                                                                     BAA_spread_d))
+
+mod_tvar_BAA_until_2018_2 <- TVAR(data = data_tvar_baa_until_2018_2, lag = 1, model = "TAR",
+                                  trace =TRUE, plot = TRUE, thVar = data_big7_until_2018$RVI, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_BAA_until_2018_2)
+a20 <- summary(mod_tvar_BAA_until_2018_2)
+
+
+# Теперь с нефтью
+data_tvar_baa_until_2018_2_brent <- subset(data_all2_with_brent_until_2018, select = c(rvi_d, d_kbd_short11,
+                                                                      slope_d2, se10, brent_d,
+                                                                      BAA_spread_d))
+data_tvar_baa_until_2018_2_brent <- na.omit(data_tvar_baa_until_2018_2_brent)
+
+mod_tvar_BAA_until_2018_2_brent <- TVAR(data = data_tvar_baa_until_2018_2_brent, lag = 1, model = "TAR",
+                                  trace =TRUE, plot = TRUE, thVar = data_all3_with_brent_until_2018$RVI, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_BAA_until_2018_2_brent)
+a20 <- summary(mod_tvar_BAA_until_2018_2_brent)
+
+
+# Переключение по нефти
+mod_tvar_BAA_until_2018_2_brent_th <- TVAR(data = data_tvar_baa_until_2018_2_brent, lag = 1, model = "TAR",
+                                        trace =TRUE, plot = TRUE, thVar = data_all3_with_brent_until_2018$brent, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_BAA_until_2018_2_brent_th)
+
+
+
+#### Строим новый MS на данных после 2018 года с удаленными наблюдениями ####
+
+# Строим модель для AAA
+mod_lm_MS_from_2018_AAA <- lm(AAA_spread_d ~ rvi_d + 
+                                d_kbd_short11 + slope_d2 + se10, data = data_big7_from_2018)
+
+
+mod_MS_from_2018_AAA <- msmFit(mod_lm_MS_from_2018_AAA,k=2,p=1,
+                                sw=c(rep(TRUE, 7)))
+
+
+# Смотрим показатели модели
+summary(mod_MS_from_2018_AAA)
+plotProb(mod_MS_from_2018_AAA,which=2)
+a21 <- mod_MS_from_2018_AAA
+
+
+# Теперь с нефтью
+mod_lm_MS_from_2018_AAA_brent <- lm(AAA_spread_d ~ rvi_d + 
+                                d_kbd_short11 + slope_d2 + se10 + brent_d, data = data_all2_with_brent_from_2018)
+
+
+mod_MS_from_2018_AAA_brent <- msmFit(mod_lm_MS_from_2018_AAA_brent,k=2,p=1,
+                               sw=c(rep(TRUE, 8)))
+
+plotProb(mod_MS_from_2018_AAA_brent,which=2)
+# Смотрим показатели модели
+summary(mod_MS_from_2018_AAA_brent)
+plotProb(mod_MS_from_2018_AAA_brent,which=2)
+a21 <- mod_MS_from_2018_AAA_brent
+AIC(mod_MS_from_2018_AAA_brent)
+
+
+# Строим модель для BAA
+mod_lm_MS_from_2018_BAA <- lm(BAA_spread_d ~ rvi_d + 
+                                d_kbd_short11 + slope_d2 + se10, data = data_big7_from_2018)
+
+
+mod_MS_from_2018_BAA <- msmFit(mod_lm_MS_from_2018_BAA,k=2,p=1,
+                                sw=c(rep(TRUE, 7)))
+
+
+# Смотрим показатели модели
+summary(mod_MS_from_2018_BAA)
+plotProb(mod_MS_from_2018_BAA,which=2)
+a22 <- mod_MS_from_2018_BAA
+
+
+# Теперь с нефтью
+mod_lm_MS_from_2018_BAA_brent <- lm(BAA_spread_d ~ rvi_d + 
+                                d_kbd_short11 + slope_d2 + se10 + brent_d, data = data_all2_with_brent_from_2018)
+
+
+mod_MS_from_2018_BAA_brent <- msmFit(mod_lm_MS_from_2018_BAA_brent,k=2,p=1,
+                               sw=c(rep(TRUE, 8)))
+
+
+# Смотрим показатели модели
+summary(mod_MS_from_2018_BAA_brent)
+plotProb(mod_MS_from_2018_BAA_brent,which=2)
+a22 <- mod_MS_from_2018_BAA_brent
+AIC(mod_MS_from_2018_BAA_brent)
+
+
+
+#### TVAR по подвыборке после 2018 года ####
+# AAA
+data_tvar_aa_from_2018_brent <- subset(data_all2_with_brent_from_2018, select = c(rvi_d, d_kbd_short11,
+                                                                   slope_d2, se10, brent_d,
+                                                                   AAA_spread_d))
+
+data_tvar_aa_from_2018_brent <- na.omit(data_tvar_aa_from_2018_brent)
+data_all3_with_brent_from_2018 <- na.omit(data_all2_with_brent_from_2018)
+
+
+mod_tvar_AAA_from_2018_brent <- TVAR(data = data_tvar_aa_from_2018_brent, lag = 1, model = "TAR",
+                                trace =TRUE, plot = TRUE, thVar = data_all3_with_brent_from_2018$RVI, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_AAA_from_2018_brent)
+a23 <- summary(mod_tvar_AAA_from_2018_brent)
+
+
+# Переключение с нефтью
+mod_tvar_AAA_from_2018_brent_th <- TVAR(data = data_tvar_aa_from_2018_brent, lag = 1, model = "TAR",
+                                     trace =TRUE, plot = TRUE, thVar = data_all3_with_brent_from_2018$brent, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_AAA_from_2018_brent_th)
+
+
+
+# BAA
+data_tvar_baa_from_2018 <- subset(data_big7_from_2018, select = c(rvi_d, d_kbd_short11,
+                                                                    slope_d2, se10,
+                                                                    BAA_spread_d))
+
+mod_tvar_BAA_from_2018 <- TVAR(data = data_tvar_baa_from_2018, lag = 1, model = "TAR",
+                                trace =TRUE, plot = TRUE, thVar = data_big7_from_2018$RVI, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_BAA_from_2018)
+# Лучше с 1 лагом
+a24 <- summary(mod_tvar_BAA_from_2018)
+
+
+# Теперь с нефтью
+data_tvar_baa_from_2018_brent <- subset(data_all2_with_brent_from_2018, select = c(rvi_d, d_kbd_short11,
+                                                                  slope_d2, se10, brent_d,
+                                                                  BAA_spread_d))
+data_tvar_baa_from_2018_brent <- na.omit(data_tvar_baa_from_2018_brent)
+
+mod_tvar_BAA_from_2018_brent <- TVAR(data = data_tvar_baa_from_2018_brent, lag = 1, model = "TAR",
+                               trace =TRUE, plot = TRUE, thVar = data_all3_with_brent_from_2018$RVI, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_BAA_from_2018_brent)
+a24 <- summary(mod_tvar_BAA_from_2018_brent)
+
+
+# Перключение с нефтью
+mod_tvar_BAA_from_2018_brent_th <- TVAR(data = data_tvar_baa_from_2018_brent, lag = 1, model = "TAR",
+                                     trace =TRUE, plot = TRUE, thVar = data_all3_with_brent_from_2018$brent, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_BAA_from_2018_brent_th)
+
+
+
+# Протестируем а нужны ли пороги?
+# linearity against SETAR
+setarTest(data_all2$AAA_спред, m = 1, hpc = "foreach")
+?setarTest
+
+TVAR.LRtest(data_tvar_aa_until_2018, lag = 1, thVar = data_all2$RVI, plot = TRUE,
+            model = "TAR", trace = TRUE, test = "1vs")
+
+
+#### Экспериментальные MS модели ####
+#В уровнях с RVI
+modlm_levels_RVI <- lm(AAA_спред ~ d_kbd_short11 +
+               slope_d2 + se10 +RVI
+             , data = data_big8)
+
+
+mod_levels_RVI <- msmFit(modlm_levels_RVI,k=2,p=2,
+                   sw=c(rep(TRUE, 8)), 
+)
+
+summary(mod_levels_RVI)
+
+#В уровнях без RVI
+modlm_levels <- lm(AAA_спред ~ d_kbd_short11 +
+                         slope_d2 + se10
+                       , data = data_big8)
+
+
+mod_levels <- msmFit(modlm_levels,k=2,p=1,
+                         sw=c(rep(TRUE, 6)), 
+)
+
+
+#В лагах с RVI
+modlm_lags_RVI <- lm(AAA_спред ~ Краткосрочная_ставка_р_1 +
+                     Наклон_р_1 + Индекс_МосБиржи_д_1 + RVI_1
+                   , data = data_big8)
+
+
+mod_lags_RVI <- msmFit(modlm_lags_RVI,k=2,p=1,
+                     sw=c(rep(TRUE, 7)), 
+)
+
+
+# В лагах без RVI
+modlm_lags <- lm(AAA_спред ~ Краткосрочная_ставка_р_1 +
+                   Наклон_р_1 + Индекс_МосБиржи_д_1
+                     , data = data_big8)
+
+
+mod_lags <- msmFit(modlm_lags,k=2,p=1,
+                       sw=c(rep(TRUE, 6)), 
+)
+
+# С лагами и уровнями
+
+modlm_all_RVI <- lm(AAA_спред ~ d_kbd_short11 + slope_d2 + 
+                      se10 +RVI + 
+                      Краткосрочная_ставка_р_1 + Наклон_р_1 + 
+                      Индекс_МосБиржи_д_1 + RVI_1
+                     , data = data_big8)
+
+mod_all_RVI <- msmFit(modlm_all_RVI,k=2,p=2,
+                       sw=c(rep(TRUE, 12)), 
+)
+summary(mod_all_RVI)
+plotProb(mod_all_RVI,which=2)
+
+
+AAA_спред_1 <- data_big8$AAA_спред[-1]
+x <- NA
+AAA_спред_1 <- c(AAA_спред_1, x)
+
+data_big8 <- data.frame(data_big8, AAA_спред_1)
+data_big9 <- na.omit(data_big8)
+
+
+#### Достаем из модели режимы и построим логит ####
+
+
+data_big10 <- na.omit(data_big9)
+
+
+# Для AAA
+logit_10 <- glm(k ~ RVI
+                   , 
+                data = data_big10, family = binomial(link = "logit"), x = TRUE)
+summary(logit_10)
+
+
+maBina(logit_10)
+stargazer(logit_10, type = "html",
+          out = "logit_models.html", rownames = TRUE)
+
+
+y <- as.factor(k)
+Pr <- predict(logit_10, type='response')
+y_pr <- as.factor(ifelse(Pr>0.5,1,0))
+?stargazer
+
+caret::confusionMatrix(y_pr,y)
+
+library(lares)
+mplot_roc(y,Pr)
+
+
+# Для BAA
+logit_11 <- glm(f ~ RVI
+                , 
+                data = data_big10, family = binomial(link = "logit"), x = TRUE)
+summary(logit_11)
+
+library(erer)
+maBina(logit_11)
+stargazer(logit_11, logit_10, type = "html",
+          out = "logit_models.html")
+
+
+y <- as.factor(f)
+Pr <- predict(logit_11, type='response')
+y_pr <- as.factor(ifelse(Pr>0.5,1,0))
+
+caret::confusionMatrix(y_pr,y)
+
+library(lares)
+mplot_roc(y,Pr)
+
+
+length(data_what7[,1])
+
+
+#### TVAR.AAA Основная модель. Сравнение####
+data_tvar_aa <- subset(data_all2, select = c(d_kbd_short11,
+                                              slope_d2, se10,
+                                              AAA_spread_d))
+# Разность RVI
+RVI_d <- diff(data_tvar_aa$RVI, 1)
+x<- NA
+RVI_d_abs <- abs(RVI_d)
+RVI_d_abs <- c(RVI_d_abs, x)
+
+data_tvar_aa <- data.frame(RVI_d_abs, data_tvar_aa)
+
+
+data_tvar_aa2 <- na.omit(data_tvar_aa)
+data_tvar_a3 <- dplyr::select(data_tvar_aa2, -RVI)
+
+# Если посмотреть по модулю
+mod_tvar_aa_d4_abs <- TVAR(data = data_tvar_aa2, lag = 2, model = "MTAR",
+                          trace =TRUE, plot = TRUE, mTh = 1, nthresh = 4, trim = 0.1)
+summary(mod_tvar_aa_d4_abs)
+
+
+#### Эксперимент TVAR для устойчивости ####
+# 2 лага
+data_tvar_aa3 <- dplyr::select(data_tvar_aa2, -se10)
+
+mod_tvar_aa_n3_2_omit <- TVAR(data = data_tvar_aa2, lag = 2, model = "MTAR",
+                         trace =TRUE, plot = TRUE, mTh = 4, nthresh = 1, trim = 0.1)
+summary(mod_tvar_aa_n3_2_omit)
+
+y <- mod_tvar_aa_n3_2_omit$usedThVar 
+data_tvar_aa4 <- dplyr::select(data_tvar_aa2, -RVI)
+data_tvar_aa5 <- dplyr::select(data_tvar_aa4, -se10)
+
+
+mod_tvar_aa_n3_3_omit <- TVAR(data = data_tvar_aa, lag = 2, model = "MTAR",
+                              trace =TRUE, plot = TRUE, thVar = y, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_aa_n3_3_omit)
+
+
+
+
+mod_tvar_aa_n3_4_omit <- TVAR(data = data_tvar_aa, lag = 2, model = "TAR",
+                              trace =TRUE, plot = TRUE, thVar = data_all2$RVI, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_aa_n3_4_omit)
+
+
+# Проверим для BAA
+data_tvar_baa3 <- dplyr::select(data_tvar_baa2, -se10)
+data_tvar_baa4 <- dplyr::select(data_tvar_baa2, -RVI)
+
+
+
+mod_tvar_baa_n3_2_omit <- TVAR(data = data_tvar_baa2, lag = 2, model = "MTAR",
+                              trace =TRUE, plot = TRUE, mTh = 4, nthresh = 1, trim = 0.1)
+summary(mod_tvar_baa_n3_2_omit)
+
+
+y <- mod_tvar_baa_n3_2_omit$usedThVar 
+data_tvar_baa4 <- dplyr::select(data_tvar_baa2, -RVI)
+
+mod_tvar_baa_n3_3_omit <- TVAR(data = data_tvar_baa4, lag = 2, model = "MTAR",
+                              trace =TRUE, plot = TRUE, thVar = y, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_baa_n3_3_omit)
+
+
+
+mod_tvar_aa_n3_4_omit <- TVAR(data = data_tvar_baa4, lag = 2, model = "TAR",
+                              trace =TRUE, plot = TRUE, thVar = data_big10$RVI, nthresh = 1, trim = 0.1 
+)
+summary(mod_tvar_aa_n3_4_omit)
+
+
+
+# TAR 
+mod_tvar_aa_nd4_1 <- TVAR(data = data_tvar_aa2, lag = 2, model = "TAR",
+                         trace =TRUE, plot = TRUE, mTh = 4, nthresh = 1, trim = 0.03)
+summary(mod_tvar_aa_nd4_1)
+
+# 2 лага
+mod_tvar_aa_nd4_2 <- TVAR(data = data_tvar_aa2, lag = 2, model = "TAR",
+                          trace =TRUE, plot = TRUE, mTh = 4, nthresh = 1)
+summary(mod_tvar_aa_nd4_2)
+
+# 2 режима
+mod_tvar3_aa_nd4_1 <- TVAR(data = data_tvar_aa2, lag = 1, model = "TAR",
+                          trace =TRUE, plot = TRUE, mTh = 4, nthresh = 2)
+summary(mod_tvar3_aa_nd4_1)
+
+# 2 режима 2 лага
+mod_tvar3_aa_nd4_2 <- TVAR(data = data_tvar_aa2, lag = 2, model = "TAR",
+                           trace =TRUE, plot = TRUE, mTh = 4, nthresh = 2)
+summary(mod_tvar3_aa_nd4_2)
+
+
+# MTAR
+mod_tvar_aa_n4_1 <- TVAR(data = data_tvar_aa2, lag = 1, model = "MTAR",
+                          trace =TRUE, plot = TRUE, mTh = 4, nthresh = 1)
+summary(mod_tvar_aa_n4_1)
+
+# 2 лага
+mod_tvar_aa_n4_2 <- TVAR(data = data_tvar_aa2, lag = 2, model = "MTAR",
+                          trace =TRUE, plot = TRUE, mTh = 4, nthresh = 1, trim = 0.07)
+summary(mod_tvar_aa_n4_2)
+
+# 2 режима
+mod_tvar3_aa_d4_1 <- TVAR(data = data_tvar_aa2, lag = 1, model = "MTAR",
+                           trace =TRUE, plot = TRUE, mTh = 4, nthresh = 2)
+summary(mod_tvar3_aa_d4_1)
+
+# 2 режима 2 лага
+mod_tvar3_aa_d4_2 <- TVAR(data = data_tvar_aa2, lag = 2, model = "MTAR",
+                           trace =TRUE, plot = TRUE, mTh = 4, nthresh = 2)
+summary(mod_tvar3_aa_d4_2)
+
+# Сравниваем по BIC
+
+BIC(mod_tvar_aa_nd4_1) ; BIC(mod_tvar_aa_nd4_2) ; BIC(mod_tvar3_aa_nd4_1) ; BIC(mod_tvar3_aa_nd4_2) ; BIC(mod_tvar_aa_n4_1) ; BIC(mod_tvar_aa_n4_2) ;BIC(mod_tvar3_aa_d4_1) ; BIC(mod_tvar3_aa_d4_2) 
+
+# Значит основаная модель - mod_tvar3_aa_d4_2, в разностях с 2 лагами и 3 режимами
+
+# Посмотрим на нее еще раз
+# 2 режима 2 лага
+mod_tvar3_aa_d4_2 <- TVAR(data = data_tvar_aa2, lag = 2, model = "MTAR",
+                          trace =TRUE, plot = TRUE, mTh = 4, nthresh = 2)
+summary(mod_tvar3_aa_d4_2)
+
+#### TVAR.BAA Основная модель. Сравнение####
+
+
+data_tvar_baa <- subset(data_big10, select = c(d_kbd_short11,
+                                             slope_d2, se10, RVI,
+                                             BAA_спред))
+data_tvar_baa2 <- na.omit(data_tvar_baa)
+
+
+
+library(tsDyn)
+# TAR 
+mod_tvar_baa_nd4_1 <- TVAR(data = data_tvar_baa2, lag = 1, model = "TAR",
+                          trace =TRUE, plot = TRUE, mTh = 4, nthresh = 1)
+summary(mod_tvar_baa_nd4_1)
+
+# 2 лага
+mod_tvar_baa_nd4_2 <- TVAR(data = data_tvar_baa2, lag = 2, model = "TAR",
+                          trace =TRUE, plot = TRUE, mTh = 4, nthresh = 1, trim = 0.1)
+summary(mod_tvar_baa_nd4_2)
+
+# 2 режима
+mod_tvar3_baa_nd4_1 <- TVAR(data = data_tvar_baa2, lag = 1, model = "TAR",
+                           trace =TRUE, plot = TRUE, mTh = 4, nthresh = 2)
+summary(mod_tvar3_baa_nd4_1)
+
+# 2 режима 2 лага
+mod_tvar3_baa_nd4_2 <- TVAR(data = data_tvar_baa2, lag = 2, model = "TAR",
+                           trace =TRUE, plot = TRUE, mTh = 4, nthresh = 2)
+summary(mod_tvar3_baa_nd4_2)
+
+
+# MTAR
+mod_tvar_baa_n4_1 <- TVAR(data = data_tvar_baa2, lag = 1, model = "MTAR",
+                         trace =TRUE, plot = TRUE, mTh = 4, nthresh = 1)
+summary(mod_tvar_baa_n4_1)
+
+# 2 лага
+mod_tvar_baa_n4_2 <- TVAR(data = data_tvar_baa2, lag = 2, model = "MTAR",
+                         trace =TRUE, plot = TRUE, mTh = 4, nthresh = 1, trim = 0.1)
+summary(mod_tvar_baa_n4_2)
+
+# 2 режима
+mod_tvar3_baa_d4_1 <- TVAR(data = data_tvar_baa2, lag = 1, model = "MTAR",
+                          trace =TRUE, plot = TRUE, mTh = 4, nthresh = 2)
+summary(mod_tvar3_baa_d4_1)
+
+# 2 режима 2 лага
+mod_tvar3_baa_d4_2 <- TVAR(data = data_tvar_baa2, lag = 2, model = "MTAR",
+                          trace =TRUE, plot = TRUE, mTh = 4, nthresh = 2)
+summary(mod_tvar3_baa_d4_2)
+
+
+# Сравниваем по BIC
+
+BIC(mod_tvar_baa_nd4_1) ; BIC(mod_tvar_baa_nd4_2) ; BIC(mod_tvar3_baa_nd4_1) ; BIC(mod_tvar3_baa_nd4_2) ; BIC(mod_tvar_baa_n4_1) ; BIC(mod_tvar_baa_n4_2) ;BIC(mod_tvar3_baa_d4_1) ; BIC(mod_tvar3_baa_d4_2) 
+
+
+#### TVAR. Эксперименты####
+
+
+# Не в разностях
+library(tsDyn)
+mod_tvar_aa_nd5 <- TVAR(data = data_tvar_aa2, lag = 1, model = "TAR",
+                       trace =TRUE, plot = TRUE, mTh = 5)
+mod_tvar_aa_nd4 <- TVAR(data = data_tvar_aa2, lag = 1, model = "TAR",
+                       trace =TRUE, plot = TRUE, mTh = 4)
+mod_tvar_aa_nd3 <- TVAR(data = data_tvar_aa2, lag = 1, model = "TAR",
+                        trace =TRUE, plot = TRUE, mTh = 3)
+mod_tvar_aa_nd2 <- TVAR(data = data_tvar_aa2, lag = 1, model = "TAR",
+                        trace =TRUE, plot = TRUE, mTh = 2)
+mod_tvar_aa_nd1 <- TVAR(data = data_tvar_aa2, lag = 1, model = "TAR",
+                        trace =TRUE, plot = TRUE, mTh = 1)
+BIC(mod_tvar_aa_nd5) ; BIC(mod_tvar_aa_nd4) ; BIC(mod_tvar_aa_nd3) ; BIC(mod_tvar_aa_nd2) ; BIC(mod_tvar_aa_nd1)
+summary(mod_tvar_aa_nd4)
+# В разностях
+mod_tvar_aa_d5 <- TVAR(data = data_tvar_aa2, lag = 1, model = "MTAR",
+                        trace =TRUE, plot = TRUE, mTh = 5)
+mod_tvar_aa_d4 <- TVAR(data = data_tvar_aa2, lag = 1, model = "MTAR",
+                        trace =TRUE, plot = TRUE, mTh = 4)
+mod_tvar_aa_d3 <- TVAR(data = data_tvar_aa2, lag = 1, model = "MTAR",
+                        trace =TRUE, plot = TRUE, mTh = 3)
+mod_tvar_aa_d2 <- TVAR(data = data_tvar_aa2, lag = 1, model = "MTAR",
+                        trace =TRUE, plot = TRUE, mTh = 2)
+mod_tvar_aa_d1 <- TVAR(data = data_tvar_aa2, lag = 1, model = "MTAR",
+                        trace =TRUE, plot = TRUE, mTh = 1)
+BIC(mod_tvar_aa_d5) ; BIC(mod_tvar_aa_d4) ; BIC(mod_tvar_aa_d3) ; BIC(mod_tvar_aa_d2) ; BIC(mod_tvar_aa_d1)
+
+
+# А если 3 режима
+mod_tvar3_aa_d5 <- TVAR(data = data_tvar_aa2, lag = 1, model = "MTAR",
+                       trace =TRUE, plot = TRUE, mTh = 5, nthresh = 2)
+
+mod_tvar3_aa_d4 <- TVAR(data = data_tvar_aa2, lag = 1, model = "MTAR",
+                       trace =TRUE, plot = TRUE, mTh = 4, nthresh = 2)
+
+mod_tvar3_aa_d3 <- TVAR(data = data_tvar_aa2, lag = 1, model = "TAR",
+                       trace =TRUE, plot = TRUE, mTh = 3, nthresh = 2)
+
+mod_tvar3_aa_d2 <- TVAR(data = data_tvar_aa2, lag = 1, model = "TAR",
+                       trace =TRUE, plot = TRUE, mTh = 2, nthresh = 2)
+
+mod_tvar3_aa_d1 <- TVAR(data = data_tvar_aa2, lag = 1, model = "TAR",
+                       trace =TRUE, plot = TRUE, mTh = 1, nthresh = 2)
+
+BIC(mod_tvar3_aa_d5) ; BIC(mod_tvar3_aa_d4) ; BIC(mod_tvar3_aa_d3) ; BIC(mod_tvar3_aa_d2) ; BIC(mod_tvar3_aa_d1)
+
+
+# В TAR Хорошо работает 1 и 2 режим
+summary(mod_tvar3_aa_d4)
+summary(mod_lags_RVI)
+
+
+mod_tvar_aa_nd4 <- TVAR(data = data_tvar_aa2, lag = 2, model = "TAR",
+                        trace =TRUE, plot = TRUE, mTh = 4, trim = 0.15)
+summary(mod_tvar_aa_nd4)
+
+#  MTAR с переключением по RVI
+mod_tvar_aa_d4 <- TVAR(data = data_tvar_aa2, lag = 2, model = "MTAR",
+                       trace =TRUE, plot = TRUE, mTh = 4)
+summary(mod_tvar_aa_d4)
+
+?TVAR
+
+
+# Переключение по MOEX и 3 режима
+mod_tvar3_aa_d3 <- TVAR(data = data_tvar_aa2, lag = 2, model = "TAR",
+                        trace =TRUE, plot = TRUE, mTh = 3, nthresh = 2, trim = 0.1)
+summary(mod_tvar3_aa_d3)
+
+# Либо с 3 режимами с переключением по разностям RVI
+mod_tvar3_aa_d4 <- TVAR(data = data_tvar_aa2, lag = 2, model = "MTAR",
+                        trace =TRUE, plot = TRUE, mTh = 4, nthresh = 2)
+summary(mod_tvar3_aa_d4)
+
+# Либо с 3 режимами с переключением по уровням RVI
+mod_tvar3_aa_nd4 <- TVAR(data = data_tvar_aa2, lag = 2, model = "TAR",
+                         trace =TRUE, plot = TRUE, mTh = 4, nthresh = 2, trim = 0.12)
+summary(mod_tvar3_aa_nd4)
+
+
+BIC(mod_tvar_aa_nd4) ; BIC(mod_tvar_aa_d4) ; BIC(mod_tvar3_aa_d3) ; BIC(mod_tvar3_aa_d4) ; BIC(mod_tvar3_aa_nd4)
+
+#### Можем достать ограничения и по ним предсказать MS ####
+
+g <- NULL
+for(i in 1:2247){
+g[i] <- ifelse(data_big9$RVI[i] > 48.25, 0, 1)
+}
+g
+
+# Построим матрицу
+k <- as.factor(k)
+g <- as.factor(g)
+
+confusionMatrix(k,g)
+
+
+#### Построение ARDL и ECM. Выбор порядка ARDL####
+
+library(ARDL)
+# Строим модель
+#AAA c RVI
+mod_auto_AAA_RVI <- auto_ardl(AAA_спред ~ RVI + d_kbd_short11 + 
+                        slope_d2 + se10, 
+                      data = data_big9, max_order = 3, selection = "BIC")
+mod_auto_AAA_RVI
+
+#AAA без RVI
+mod_auto_AAA <- auto_ardl(AAA_спред ~  d_kbd_short11 + 
+                        slope_d2 + se10, 
+                      data = data_big9, max_order = 3, selection = "BIC")
+mod_auto_AAA
+
+#BAA с RVI
+mod_auto_BAA_RVI <- auto_ardl(BAA_спред ~ RVI + d_kbd_short11 + 
+                                slope_d2 + se10, 
+                       data = data_big9, max_order = 3, selection = "BIC")
+mod_auto_BAA_RVI
+
+#BAA без RVI
+mod_auto_BAA <- auto_ardl(BAA_спред ~ d_kbd_short11 + 
+                            slope_d2 + se10, 
+                              data = data_big9, max_order = 3, selection = "BIC")
+mod_auto_BAA
+
+#B с RVI
+mod_auto_B_RVI <- auto_ardl(B_спред ~ RVI + d_kbd_short11 + 
+                                slope_d2 + se10, 
+                              data = data_big9, max_order = 3, selection = "BIC")
+mod_auto_B_RVI
+
+#B без RVI
+mod_auto_B <- auto_ardl(B_спред ~ d_kbd_short11 + 
+                            slope_d2 + se10, 
+                          data = data_big9, max_order = 3, selection = "BIC")
+mod_auto_B
+
+
+####Построение ARDL. AAA####
+
+#ААА c RVI
+mod_ardl_aaa_rvi <- ardl(AAA_спред ~ RVI + d_kbd_short11 + 
+                           slope_d2 + se10, 
+              data = data_big10, order = mod_auto_AAA_RVI$best_order)
+summary(mod_ardl_aaa_rvi)
+
+#ААА без RVI
+mod_ardl_aaa <- ardl(AAA_спред ~ d_kbd_short11 + 
+                       slope_d2 + se10, 
+              data = data_big9, order = mod_auto_AAA$best_order)
+summary(mod_ardl_aaa)
+
+
+BIC(mod_ardl_aaa_rvi) ; BIC(mod_ardl_aaa)
+# Лучше модель с RVI
+
+# Достанем мультипликаторы
+a3 <- multipliers(mod_ardl_aaa_rvi, type = "sr")
+a4 <- multipliers(mod_ardl_aaa_rvi, type = "lr")
+
+#тесты на автокорреляцию
+durbinWatsonTest(mod_ardl_aaa_rvi)
+# Автокорреляции нет
+
+####Построение ARDL. BAA####
+
+#BAA
+mod_ardl_baa_rvi <- ardl(BAA_спред ~  RVI + d_kbd_short11 + 
+                           slope_d2 + se10, 
+                         data = data_big10, order = mod_auto_BAA_RVI$best_order)
+summary(mod_ardl_baa_rvi)
+
+
+mod_ardl_baa <- ardl(AAA_спред ~ d_kbd_short11 + 
+                       slope_d2 + se10, 
+                     data = data_big9, order = mod_auto_BAA$best_order)
+summary(mod_ardl_baa)
+
+BIC(mod_ardl_baa_rvi) ; BIC(mod_ardl_baa)
+# А тут лучше без RVI
+a5 <- multipliers(mod_ardl_baa_rvi, type = "sr")
+a6 <- multipliers(mod_ardl_baa_rvi, type = "lr")
+
+
+
+#### Достанем мультипликаторы и построим выдачу ARDL ####
+library(dplyr)
+library(flextable)
+library(officer)
+
+
+library(flextable)
+library(officer)
+set_flextable_defaults(font.size = 10,
+                         font.color='black', theme_fun=theme_vanilla, digits = 2, text.align="left", 
+                         font.align="center")
+
+names<- c("Константа", "RVI_р", "ИПП_р", "Безрисковая_ставка_р", "Наклон КБД_d", "ИПЦ_р", "Доходность IMOEX", "Доходность нефти")
+data <- data.frame(vars=names, 
+                   SR_AAA=as.character(round(a25$coefficients[,1], 2)), p3=a25$coefficients[ , 4], 
+                   LR_AAA=as.character(round(a26$coefficients[,1], 2)), p4=a26$coefficients[, 4],
+                   SR_BAA=as.character(round(a27$Estimate, 2)), p1=a27$`Pr(>|t|)`, 
+                   LR_BAA=as.character(round(a28$Estimate, 2)), p2=a28$`Pr(>|t|)`) %>%  
+  mutate( SR_AAA=case_when(p3<0.01~paste(SR_AAA, "***", sep=''), TRUE~
+                         case_when(p3<0.05~paste(SR_AAA, "**", sep=''), TRUE~
+                                     case_when(p3<0.1~paste(SR_AAA, "*", sep=''), TRUE~SR_AAA))),
+          LR_AAA=case_when(p4<0.01~paste(LR_AAA, "***", sep=''), TRUE~
+                         case_when(p4<0.05~paste(LR_AAA, "**", sep=''), TRUE~
+                                     case_when(p4<0.1~paste(LR_AAA, "*", sep=''), TRUE~LR_AAA))),
+          SR_BAA=case_when(p1<0.01~paste(SR_BAA, "***", sep=''), TRUE~
+                             case_when(p1<0.05~paste(SR_BAA, "**", sep=''), TRUE~
+                                         case_when(p1<0.1~paste(SR_BAA, "*", sep=''), TRUE~SR_BAA))),
+          LR_BAA=case_when(p2<0.01~paste(LR_BAA, "***", sep=''), TRUE~
+                             case_when(p2<0.05~paste(LR_BAA, "**", sep=''), TRUE~
+                                         case_when(p2<0.1~paste(LR_BAA, "*", sep=''), TRUE~LR_BAA)))) %>% 
+  dplyr::select(-p1, -p2, -p3, -p4) %>% as_flextable(max_row=10, show_coltype=FALSE) %>% delete_part(part='footer') %>% 
+  align(part="header", align="center") %>% 
+  width(j = 1, width=2) %>% width(j = 2:5, width=1.2) %>% 
+  add_header_row(top = TRUE, values = c('', 'LM', 'ARDL'), colwidths = c(1,2, 2)) %>% 
+  add_header_lines(values = "LM и ARDL на квартальных данных") %>% align(part="body", j=2:5, align="center") %>% 
+  style(i=1, part="header", pr_t = fp_text(color = "black", font.size=12, bold=TRUE)) %>% save_as_docx(path="C://Users/Alexey/Desktop/beauty_q.docx")
+
+
+
+#тесты на автокорреляцию
+durbinWatsonTest(mod_ardl_baa)
+# Автокорреляции нет
+
+#### Построим выдачу MS AAA####
+
+# Установим параметры по умлочанию
+set_flextable_defaults(font.size = 10,
+                       font.color='black', theme_fun=theme_vanilla, digits = 2, text.align="left", 
+                       font.align="center")
+
+# Достанем из модели коэффициенты
+summary(mod_levels2)
+r <- modlm_levels2@Coef
+
+# Расчитаем мультипликаторы
+# IMOEX
+IMOEX_MS__R1_SR <- r$se10[1]
+IMOEX_MS__R2_SR <- r$se10[2]
+
+IMOEX_MS__R1_LR <- IMOEX_MS__R1_SR / (1 - r$AAA_спред_1[1] - r$AAA_спред_2[1]) 
+IMOEX_MS__R2_LR <- IMOEX_MS__R2_SR / (1 - r$AAA_спред_1[2] - r$AAA_спред_2[2]) 
+
+# R_f
+R_f_MS__R1_SR <- r$d_kbd_short11[1]
+R_f_MS__R2_SR <- r$d_kbd_short11[2]
+
+r$AAA_спред_1
+
+
+R_f_MS__R1_LR <- R_f_MS__R1_SR / (1 - r$AAA_спред_1[1] - r$AAA_спред_2[1]) 
+R_f_MS__R2_LR <- R_f_MS__R2_SR / (1 - r$AAA_спред_1[2] - r$AAA_спред_2[2]) 
+
+# Slope
+Slope_MS__R1_SR <- r$slope_d2[1]
+Slope_MS__R2_SR <- r$slope_d2[2]
+
+Slope_MS__R1_LR <- Slope_MS__R1_SR / (1 - r$AAA_спред_1[1] - r$AAA_спред_2[1]) 
+Slope_MS__R2_LR <- Slope_MS__R2_SR / (1 - r$AAA_спред_1[2] - r$AAA_спред_2[2]) 
+
+# Сгрупируем коэффициценты
+MS_R1_SR_coef <- c(R_f_MS__R1_SR, Slope_MS__R1_SR, IMOEX_MS__R1_SR)
+MS_R2_SR_coef <- c(R_f_MS__R2_SR, Slope_MS__R2_SR, IMOEX_MS__R2_SR)
+MS_R1_LR_coef <- c(R_f_MS__R1_LR, Slope_MS__R1_LR, IMOEX_MS__R1_LR)
+MS_R2_LR_coef <- c(R_f_MS__R2_LR, Slope_MS__R2_LR, IMOEX_MS__R2_LR)
+
+a <- multipliers(mod_ardl_baa_rvi, type = "sr")
+MS_names <- c("R_f", "Наклон КБД", "Доходность IMOEX")
+a2 <- multipliers(mod_ardl_baa_rvi, type = "lr")
+data <- data.frame(vars=MS_names, 
+                   SR_R1=as.character(round(MS_R1_SR_coef, 2), p3=a3$`Pr(>|t|)`[1:3]), 
+                   LR_R1=as.character(round(MS_R1_LR_coef,2), p3=a3$`Pr(>|t|)`[1:3]),
+                   SR_R2=as.character(round(MS_R2_SR_coef, 2), p3=a3$`Pr(>|t|)`[1:3]), 
+                   LR_R2=as.character(round(MS_R2_LR_coef,2)), p3=a3$`Pr(>|t|)`[1:3]) %>% 
+  mutate( SR_R1=case_when(p3<0.001~paste(SR_R1, "***", sep=''), TRUE~
+                             case_when(p3<0.05~paste(SR_R1, "***", sep=''), TRUE~
+                                         case_when(p3<0.1~paste(SR_R1, "***", sep=''), TRUE~SR_R1))),
+          LR_R1=case_when(p3<0.001~paste(LR_R1, "***", sep=''), TRUE~
+                             case_when(p3<0.05~paste(LR_R1, "***", sep=''), TRUE~
+                                         case_when(p3<0.1~paste(LR_R1, "***", sep=''), TRUE~LR_R1))),
+          SR_R2=case_when(p3<0.001~paste(SR_R2, "***", sep=''), TRUE~
+                             case_when(p3<0.05~paste(SR_R2, "***", sep=''), TRUE~
+                                         case_when(p3<0.1~paste(SR_R2, "***", sep=''), TRUE~SR_R2))),
+          LR_R2=case_when(p3<0.001~paste(LR_R2, "***", sep=''), TRUE~
+                             case_when(p3<0.05~paste(LR_R2, "***", sep=''), TRUE~
+                                         case_when(p3<0.1~paste(LR_R2, "***", sep=''), TRUE~LR_R2)))) %>% 
+  dplyr::select(-p3) %>% 
+  as_flextable(max_row=10, show_coltype=FALSE) %>% delete_part(part='footer') %>% 
+  align(part="header", align="center") %>% 
+  width(j = 1, width=2) %>% width(j = 2:5, width=1.2) %>% 
+  add_header_row(top = TRUE, values = c('', 'Режим 1', 'Режим 2'), colwidths = c(1,2, 2)) %>% 
+  add_header_lines(values = "Мультипликаторы MS для кредитного спреда AAA облигаций") %>% align(part="body", j=2:5, align="center") %>% 
+  style(i=1, part="header", pr_t = fp_text(color = "black", font.size=12, bold=TRUE)) %>% save_as_docx(path="C://Users/Alexey/Desktop/beauty_MS.docx")
+
+
+#### Выдача MS для BAA облигаций ####
+
+summary(modlm_levels2_BAA)
+r <- modlm_levels2_BAA@Coef
+
+# Расчитаем мультипликаторы
+# IMOEX
+IMOEX_MS__R1_SR_BAA <- r$se10[1]
+IMOEX_MS__R2_SR_BAA <- r$se10[2]
+
+IMOEX_MS__R1_LR_BAA <- IMOEX_MS__R1_SR_BAA / (1 - r$BAA_спред_1[1] - r$BAA_спред_2[1]) 
+IMOEX_MS__R2_LR_BAA <- IMOEX_MS__R2_SR_BAA / (1 - r$BAA_спред_1[2] - r$BAA_спред_2[2]) 
+
+# R_f
+R_f_MS__R1_SR_BAA <- r$d_kbd_short11[1]
+R_f_MS__R2_SR_BAA <- r$d_kbd_short11[2]
+
+R_f_MS__R1_LR_BAA <- R_f_MS__R1_SR_BAA / (1 - r$BAA_спред_1[1] - r$BAA_спред_2[1]) 
+R_f_MS__R2_LR_BAA <- R_f_MS__R2_SR_BAA / (1 -r$BAA_спред_1[2] - r$BAA_спред_2[2]) 
+
+# Slope
+Slope_MS__R1_SR_BAA <- r$slope_d2[1]
+Slope_MS__R2_SR_BAA <- r$slope_d2[2]
+
+Slope_MS__R1_LR_BAA <- Slope_MS__R1_SR_BAA / (1 - r$BAA_спред_1[1] - r$BAA_спред_2[1]) 
+Slope_MS__R2_LR_BAA <- Slope_MS__R2_SR_BAA / (1 - r$BAA_спред_1[2] - r$BAA_спред_2[2]) 
+
+# Сгрупируем коэффициценты
+MS_R1_SR_coef_BAA <- c(R_f_MS__R1_SR_BAA, Slope_MS__R1_SR_BAA, IMOEX_MS__R1_SR_BAA)
+MS_R2_SR_coef_BAA <- c(R_f_MS__R2_SR_BAA, Slope_MS__R2_SR_BAA, IMOEX_MS__R2_SR_BAA)
+MS_R1_LR_coef_BAA <- c(R_f_MS__R1_LR_BAA, Slope_MS__R1_LR_BAA, IMOEX_MS__R1_LR_BAA)
+MS_R2_LR_coef_BAA <- c(R_f_MS__R2_LR_BAA, Slope_MS__R2_LR_BAA, IMOEX_MS__R2_LR_BAA)
+
+
+
+MS_names <- c("R_f", "Наклон КБД", "Доходность IMOEX")
+data <- data.frame(vars=MS_names, 
+                   SR_R1=as.character(round(MS_R1_SR_coef_BAA, 2), p3=a3$`Pr(>|t|)`[1:3]), 
+                   LR_R1=as.character(round(MS_R1_LR_coef_BAA,2), p3=a3$`Pr(>|t|)`[1:3]),
+                   SR_R2=as.character(round(MS_R2_SR_coef_BAA, 2), p3=a3$`Pr(>|t|)`[1:3]), 
+                   LR_R2=as.character(round(MS_R2_LR_coef_BAA,2)), p3=a3$`Pr(>|t|)`[1:3]) %>% 
+  mutate( SR_R1=case_when(p3<0.001~paste(SR_R1, "***", sep=''), TRUE~
+                            case_when(p3<0.05~paste(SR_R1, "***", sep=''), TRUE~
+                                        case_when(p3<0.1~paste(SR_R1, "***", sep=''), TRUE~SR_R1))),
+          LR_R1=case_when(p3<0.001~paste(LR_R1, "***", sep=''), TRUE~
+                            case_when(p3<0.05~paste(LR_R1, "***", sep=''), TRUE~
+                                        case_when(p3<0.1~paste(LR_R1, "***", sep=''), TRUE~LR_R1))),
+          SR_R2=case_when(p3<0.001~paste(SR_R2, "***", sep=''), TRUE~
+                            case_when(p3<0.05~paste(SR_R2, "***", sep=''), TRUE~
+                                        case_when(p3<0.1~paste(SR_R2, "***", sep=''), TRUE~SR_R2))),
+          LR_R2=case_when(p3<0.001~paste(LR_R2, "***", sep=''), TRUE~
+                            case_when(p3<0.05~paste(LR_R2, "***", sep=''), TRUE~
+                                        case_when(p3<0.1~paste(LR_R2, "***", sep=''), TRUE~LR_R2)))) %>% 
+  dplyr::select(-p3) %>% 
+  as_flextable(max_row=10, show_coltype=FALSE) %>% delete_part(part='footer') %>% 
+  align(part="header", align="center") %>% 
+  width(j = 1, width=2) %>% width(j = 2:5, width=1.2) %>% 
+  add_header_row(top = TRUE, values = c('', 'Режим 1', 'Режим 2'), colwidths = c(1,2, 2)) %>% 
+  add_header_lines(values = "Мультипликаторы MS для кредитного спреда AAA облигаций") %>% align(part="body", j=2:5, align="center") %>% 
+  style(i=1, part="header", pr_t = fp_text(color = "black", font.size=12, bold=TRUE)) %>% save_as_docx(path="C://Users/Alexey/Desktop/beauty_MS_BAA.docx")
+
+#### Сделаем выдачу TVAR AAA####
+summary(mod_tvar_aa_n4_2)
+
+
+# Достанем коэффициенты и p-value
+g <- summary(mod_tvar_aa_n3_4_omit)
+coef_TVAR_AAA_R1 <- g$coefficients$Bdown[4, 1:9]
+coef_TVAR_AAA_R2 <- g$coefficients$Bup[4,  1:9]
+# Второй режим не стационарен
+
+p_TVAR_AAA_R1 <- g$Pvalues$Bdown[4, 2:4]
+p_TVAR_AAA_R2 <- g$Pvalues$Bup[4,2:4]
+
+
+# Расчитаем мультипликаторы
+m_Rf_TVAR_AAA_R1_LR <- (coef_TVAR_AAA_R1[2])/ (1 - coef_TVAR_AAA_R1[5] - coef_TVAR_AAA_R1[9])
+m_Slope_TVAR_AAA_R1_LR <- (coef_TVAR_AAA_R1[3])/ (1 - coef_TVAR_AAA_R1[5] - coef_TVAR_AAA_R1[9])
+m_IMOEX_TVAR_AAA_R1_LR <- (coef_TVAR_AAA_R1[4])/ (1 - coef_TVAR_AAA_R1[5] - coef_TVAR_AAA_R1[9])
+
+
+m_Rf_TVAR_AAA_R1_SR <- coef_TVAR_AAA_R1[2]
+m_Slope_TVAR_AAA_R1_SR <- coef_TVAR_AAA_R1[3]
+m_IMOEX_TVAR_AAA_R1_SR <- coef_TVAR_AAA_R1[4]
+
+
+v_coef_TVAR_AAA_R_1_SR <- c(m_Rf_TVAR_AAA_R1_SR, m_Slope_TVAR_AAA_R1_SR, m_IMOEX_TVAR_AAA_R1_SR)
+v_coef_TVAR_AAA_R_1_LR <- c(m_Rf_TVAR_AAA_R1_LR, m_Slope_TVAR_AAA_R1_LR, m_IMOEX_TVAR_AAA_R1_LR)
+
+# 2 режим 
+
+
+# Расчитаем мультипликаторы
+m_Rf_TVAR_AAA_R2_LR <- (coef_TVAR_AAA_R2[2] + coef_TVAR_AAA_R2[6])/ (1 - coef_TVAR_AAA_R2[5] - coef_TVAR_AAA_R2[9])
+m_Slope_TVAR_AAA_R2_LR <- (coef_TVAR_AAA_R2[3])/ (1 - coef_TVAR_AAA_R2[5] - coef_TVAR_AAA_R2[9])
+m_IMOEX_TVAR_AAA_R2_LR <- (coef_TVAR_AAA_R2[4])/ (1 - coef_TVAR_AAA_R2[5] - coef_TVAR_AAA_R2[9])
+
+
+m_Rf_TVAR_AAA_R2_SR <- coef_TVAR_AAA_R2[2]
+m_Slope_TVAR_AAA_R2_SR <- coef_TVAR_AAA_R2[3]
+m_IMOEX_TVAR_AAA_R2_SR <- coef_TVAR_AAA_R2[4]
+
+
+v_coef_TVAR_AAA_R_2_SR <- c(m_Rf_TVAR_AAA_R2_SR, m_Slope_TVAR_AAA_R2_SR, m_IMOEX_TVAR_AAA_R2_SR)
+v_coef_TVAR_AAA_R_2_LR <- c(m_Rf_TVAR_AAA_R2_LR, m_Slope_TVAR_AAA_R2_LR, m_IMOEX_TVAR_AAA_R2_LR)
+
+
+
+
+p3 <-  p_TVAR_AAA_R1
+p2 <- p_TVAR_AAA_R2
+p1 <-  p_TVAR_AAA_R1
+p4 <- p_TVAR_AAA_R2
+
+p3 <-  as.numeric(p3)
+p2 <- as.numeric(p2)
+p1 <- as.numeric(p1)
+p4 <- as.numeric(p4)
+
+
+
+# Строим выдачу
+
+TVAR_names <- c("Безрисковая ставка" ,"Наклон КБД", "Доходность IMOEX")
+data <- data.frame(vars=TVAR_names, 
+                   SR_R1=round(v_coef_TVAR_AAA_R_1_SR, 2), p3, 
+                   LR_R1=round(v_coef_TVAR_AAA_R_1_LR,2), p2,
+                   SR_R2=round(v_coef_TVAR_AAA_R_2_SR, 2), p1, 
+                   LR_R2=round(v_coef_TVAR_AAA_R_2_LR,2), p4) %>% 
+  dplyr::select(-p1, -p2, -p3, -p4) %>% 
+  as_flextable(max_row=10, show_coltype=FALSE) %>% delete_part(part='footer') %>% 
+  align(part="header", align="center") %>% 
+  width(j = 1, width=2) %>% width(j = 2:5, width=1.2) %>% 
+  add_header_row(top = TRUE, values = c('', 'Режим 1', 'Режим 2'), colwidths = c(1,2, 2)) %>% 
+  add_header_lines(values = "Мультипликаторы TVAR для кредитного спреда AAA облигаций") %>% align(part="body", j=2:5, align="center") %>% 
+  style(i=1, part="header", pr_t = fp_text(color = "black", font.size=12, bold=TRUE)) %>% save_as_docx(path="C://Users/Alexey/Desktop/beauty_TVAR_AAA_best.docx")
+
+#### Выдача BAA ####
+
+h$coefficients$Bup
+# Достанем коэффициенты и p-value
+h <- summary(mod_tvar_aa_n3_4_omit)
+coef_TVAR_BAA_R1 <- h$coefficients$Bdown[4, 1:9]
+coef_TVAR_BAA_R2 <- h$coefficients$Bup[4, 1:9]
+
+p_TVAR_BAA_R1 <- h$Pvalues$Bdown[4, 2:4]
+p_TVAR_BAA_R2 <- h$Pvalues$Bup[4,2:4]
+
+
+# Расчитаем мультипликаторы в 1 режиме
+m_Rf_TVAR_BAA_R1_LR <- (coef_TVAR_BAA_R1[2])/ (1 - coef_TVAR_BAA_R1[5] - coef_TVAR_BAA_R1[9])
+m_Slope_TVAR_BAA_R1_LR <- (coef_TVAR_BAA_R1[3] + coef_TVAR_BAA_R1[7])/ (1 - coef_TVAR_BAA_R1[5] - coef_TVAR_BAA_R1[9])
+m_IMOEX_TVAR_BAA_R1_LR <- (coef_TVAR_BAA_R1[4] + coef_TVAR_BAA_R1[8])/ (1 - coef_TVAR_BAA_R1[5] - coef_TVAR_BAA_R1[9])
+
+
+m_Rf_TVAR_BAA_R1_SR <- coef_TVAR_BAA_R1[2]
+m_Slope_TVAR_BAA_R1_SR <- coef_TVAR_BAA_R1[3]
+m_IMOEX_TVAR_BAA_R1_SR <- coef_TVAR_BAA_R1[4]
+
+
+v_coef_TVAR_BAA_R_1_SR <- c(m_Rf_TVAR_BAA_R1_SR, m_Slope_TVAR_BAA_R1_SR, m_IMOEX_TVAR_BAA_R1_SR)
+v_coef_TVAR_BAA_R_1_LR <- c(m_Rf_TVAR_BAA_R1_LR, m_Slope_TVAR_BAA_R1_LR, m_IMOEX_TVAR_BAA_R1_LR)
+
+
+
+# Расчитаем мультипликаторы во 2 режиме
+m_Rf_TVAR_BAA_R2_LR <- (coef_TVAR_BAA_R2[2])/ (1 - coef_TVAR_BAA_R1[5] - coef_TVAR_BAA_R1[9])
+m_Slope_TVAR_BAA_R2_LR <- (coef_TVAR_BAA_R2[3])/ (1 - coef_TVAR_BAA_R1[5] - coef_TVAR_BAA_R1[9])
+m_IMOEX_TVAR_BAA_R2_LR <- (coef_TVAR_BAA_R2[4] + coef_TVAR_BAA_R2[8])/ (1 - coef_TVAR_BAA_R1[5] - coef_TVAR_BAA_R1[9])
+
+
+m_Rf_TVAR_BAA_R2_SR <- coef_TVAR_BAA_R2[2]
+m_Slope_TVAR_BAA_R2_SR <- coef_TVAR_BAA_R2[3]
+m_IMOEX_TVAR_BAA_R2_SR <- coef_TVAR_BAA_R2[4]
+
+
+v_coef_TVAR_BAA_R_2_SR <- c(m_Rf_TVAR_BAA_R2_SR, m_Slope_TVAR_BAA_R2_SR, m_IMOEX_TVAR_BAA_R2_SR)
+v_coef_TVAR_BAA_R_2_LR <- c(m_Rf_TVAR_BAA_R2_LR, m_Slope_TVAR_BAA_R2_LR, m_IMOEX_TVAR_BAA_R2_LR)
+
+
+p3 <-  p_TVAR_BAA_R1
+p2 <- p_TVAR_BAA_R2
+p1 <-  p_TVAR_BAA_R1
+p4 <- p_TVAR_BAA_R2
+
+p3 <-  as.numeric(p3)
+p2 <- as.numeric(p2)
+p1 <- as.numeric(p1)
+p4 <- as.numeric(p4)
+
+
+data <- data.frame(vars=TVAR_names, 
+                   SR_BAA_R1=as.character(round(v_coef_TVAR_BAA_R_1_SR, 2)), 
+                   LR_BAA_R1=as.character(round(v_coef_TVAR_BAA_R_1_LR,2)),
+                   SR_BAA_R2=as.character(round(v_coef_TVAR_BAA_R_2_SR, 2)),  
+                   LR_BAA_R2=as.character(round(v_coef_TVAR_BAA_R_2_LR,2))) %>% 
+  as_flextable(max_row=10, show_coltype=FALSE) %>% delete_part(part='footer') %>% 
+  align(part="header", align="center") %>% 
+  width(j = 1, width=2) %>% width(j = 2:5, width=1.2) %>% 
+  add_header_row(top = TRUE, values = c('', 'R1', 'R2'), colwidths = c(1,2, 2)) %>% 
+  add_header_lines(values = "Мультипликаторы TVAR для кредитного спреда BAA облигаций") %>% align(part="body", j=2:5, align="center") %>% 
+  style(i=1, part="header", pr_t = fp_text(color = "black", font.size=12, bold=TRUE)) %>% save_as_docx(path="C://Users/Alexey/Desktop/beauty_TVAR_BAA_best.docx")
+
+
+mutate( SR_R1=case_when(p3<0.001~paste(SR_R1, "***", sep=''), TRUE~
+                          case_when(p3<0.05~paste(SR_R1, "**", sep=''), TRUE~
+                                      case_when(p3<0.1~paste(SR_R1, "*", sep=''), TRUE~SR_R1))),
+        LR_R1=case_when(p2<0.001~paste(LR_R1, "***", sep=''), TRUE~
+                          case_when(p2<0.05~paste(LR_R1, "***", sep=''), TRUE~
+                                      case_when(p2<0.1~paste(LR_R1, "***", sep=''), TRUE~LR_R1))),
+        SR_R2=case_when(p1<0.001~paste(SR_R2, "***", sep=''), TRUE~
+                          case_when(p1<0.05~paste(SR_R2, "***", sep=''), TRUE~
+                                      case_when(p1<0.1~paste(SR_R2, "***", sep=''), TRUE~SR_R2))),
+        LR_R2=case_when(p4<0.001~paste(LR_R2, "***", sep=''), TRUE~
+                          case_when(p4<0.05~paste(LR_R2, "***", sep=''), TRUE~
+                                      case_when(p4<0.1~paste(LR_R2, "***", sep=''), TRUE~LR_R2)))) %>% 
+
+
+####Построение ARDL. B####
+
+#B
+mod_ardl_b_rvi <- ardl(AAA_спред ~  RVI + d_kbd_short11 + 
+                           slope_d2 + se10, 
+                         data = data_big9, order = c(3,3, 3, 3, 3) )
+summary(mod_ardl_b_rvi)
+
+mod_ardl_b <- ardl(AAA_спред ~ d_kbd_short11 + 
+                       slope_d2 + se10, 
+                     data = data_big9, order = c(3, 3, 3, 3))
+summary(mod_ardl_b)
+
+plot(data_big9$BAA_спред, type = "l")
+adf.test(data_big9$BAA_спред)
+
+#### Построение ARDL без лагов. RVI####
+
+mod_ardl_aaa_rvi_no_lags <- ardl(AAA_спред ~ RVI + d_kbd_short11 + 
+                           slope_d2 + se10, 
+                         data = data_big10, order = c(2, 0, 0, 0, 0))
+summary(mod_ardl_aaa_rvi_no_lags)
+
+#ААА без RVI
+mod_ardl_aaa_no_lags <- ardl(AAA_спред ~ d_kbd_short11 + 
+                       slope_d2 + se10, 
+                     data = data_big9, order = c(2, 0, 0, 0))
+summary(mod_ardl_aaa_no_lags)
+
+
+BIC(mod_ardl_aaa_rvi_no_lags) ; BIC(mod_ardl_aaa_no_lags)
+# Лучше модель без RVI
+
+# Достанем мультипликаторы
+m1 <- multipliers(mod_ardl_aaa_rvi_no_lags, type = "sr")
+m2 <- multipliers(mod_ardl_aaa_rvi_no_lags, type = "lr")
+
+
+
+# Теперь для BAA
+mod_ardl_baa_rvi_no_lags <- ardl(BAA_спред ~  RVI + d_kbd_short11 + 
+                           slope_d2 + se10, 
+                         data = data_big10, order = c(2, 0, 0, 0, 0))
+summary(mod_ardl_baa_rvi_no_lags)
+
+
+mod_ardl_baa_no_lags <- ardl(AAA_спред ~ d_kbd_short11 + 
+                       slope_d2 + se10, 
+                     data = data_big10, order = c(2, 0, 0, 0))
+summary(mod_ardl_baa_no_lags)
+
+BIC(mod_ardl_baa_rvi_no_lags) ; BIC(mod_ardl_baa_no_lags)
+# А тут лучше без RVI
+m3 <- multipliers(mod_ardl_baa_rvi_no_lags, type = "sr")
+m4 <- multipliers(mod_ardl_baa_rvi_no_lags, type = "lr")
+
+
+#### Построение ARDL без лагов. RVI_1####
+x <- NA
+RVI_1 <- c(data_big10$RVI[-1], x)
+data_big11 <- data.frame(data_big10, RVI_1)
+data_big11 <- na.omit(data_big11)
+
+
+
+mod_ardl_aaa_rvi_no_lags_RVI1 <- ardl(AAA_спред ~ RVI_1 + d_kbd_short11 + 
+                                   slope_d2 + se10, 
+                                 data = data_big11, order = c(2, 0, 0, 0, 0))
+summary(mod_ardl_aaa_rvi_no_lags_RVI1)
+
+
+# Достанем мультипликаторы
+m1 <- multipliers(mod_ardl_aaa_rvi_no_lags_RVI1, type = "sr")
+m2 <- multipliers(mod_ardl_aaa_rvi_no_lags_RVI1, type = "lr")
+
+
+
+# Теперь для BAA
+mod_ardl_baa_rvi_no_lags_RVI1 <- ardl(BAA_спред ~  RVI_1 + d_kbd_short11 + 
+                                   slope_d2 + se10, 
+                                 data = data_big11, order = c(2, 0, 0, 0, 0))
+summary(mod_ardl_baa_rvi_no_lags_RVI1)
+
+
+m3 <- multipliers(mod_ardl_baa_rvi_no_lags_RVI1, type = "sr")
+m4 <- multipliers(mod_ardl_baa_rvi_no_lags_RVI1, type = "lr")
